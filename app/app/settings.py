@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_celery_results',
     'core',
+    'tree',
 ]
 
 MIDDLEWARE = [
@@ -79,12 +81,6 @@ WSGI_APPLICATION = 'app.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-
-print('HOST', os.environ.get('DB_HOST'))
-print('NAME', os.environ.get('DB_NAME'))
-print('USER', os.environ.get('DB_USER'))
-print('PASSWORD', os.environ.get('DB_PASS'))
-
 
 DATABASES = {
     'default': {
@@ -143,3 +139,12 @@ STATIC_ROOT = '/vol/web/static'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# # <=========== CONGIFGURE CELERY ===========>
+# CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+# CELERY_RESULT_BACKEND = 'django-db'
+# CELERY_ACCEPT_CONTENT = ['application/json']
+# CELERY_TASK_SERIALIZER = 'json'
+# CELERY_RESULT_SERIALIZER = 'json'
+# # </========== CONGIFGURE CELERY ===========>

@@ -4,6 +4,7 @@ services:
   app:
     build:
       context: .
+    container_name: django
     command: >
       sh -c "python manage.py wait_for_db &&
              python manage.py migrate &&
@@ -24,11 +25,37 @@ services:
       - db
 
   db:
-    image: postgres:13-alpine
+    image: postgres
+    container_name: postgres
     ports:
       - 6543:5432
-
     environment:
       - POSTGRES_DB=devdb
       - POSTGRES_USER=devuser
       - POSTGRES_PASSWORD=changeme
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  
+  redis:
+      image: redis:alpine
+      container_name: redis
+      healthcheck:
+        test: ["CMD", "redis-cli", "ping"]
+        interval: 2s
+        timeout: 3s
+        retries: 10
+
+  celery:
+    build: 
+      context: .
+    container_name: celery
+    command: celery -A app worker -l info
+    volumes:
+      - ./app:/app
+    depends_on:
+      - app
+      - redis
+      - db

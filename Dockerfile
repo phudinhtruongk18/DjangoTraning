@@ -10,6 +10,13 @@ COPY ./scripts /scripts
 WORKDIR /app
 EXPOSE 8000
 
+# Installing client libraries and any other package you need
+RUN apk update && apk add libpq
+
+# Installing build dependencies
+# For python3 you need to add python3-dev *please upvote the comment
+# of @its30 below if you use this*
+
 RUN python -m venv /py && \
     /py/bin/pip install --upgrade pip && \
     apk add --update --no-cache postgresql-client && \

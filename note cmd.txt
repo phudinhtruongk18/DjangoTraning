@@ -16,7 +16,13 @@ cmd:
     docker-compose run --rm app sh -c "python manage.py createsuperuser"
 
     docker-compose -f docker-compose-deploy.yml down --volumes
+    docker-compose down --volumes --remove-orphans flag
     # TAKE IT DOWN (cause make some error with the one before)
 
     docker-compose -f docker-compose-deploy.yml build
     docker-compose -f docker-compose-deploy.yml up
+
+% tam thoi bo dong nay o db
+restart: always
+
+
