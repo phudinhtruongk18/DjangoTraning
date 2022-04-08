@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'core',
     'tree',
+    # 'healchecker',
 ]
 
 MIDDLEWARE = [
@@ -142,9 +143,9 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
 # # <=========== CONGIFGURE CELERY ===========>
-# CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
-# CELERY_RESULT_BACKEND = 'django-db'
-# CELERY_ACCEPT_CONTENT = ['application/json']
-# CELERY_TASK_SERIALIZER = 'json'
-# CELERY_RESULT_SERIALIZER = 'json'
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER", "redis://redis:6379/0")
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
 # # </========== CONGIFGURE CELERY ===========>
