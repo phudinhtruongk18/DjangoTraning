@@ -42,3 +42,5 @@ restart: always
     # This code executes inside a transaction.
     do_more_stuff()
 }
+
+telnet redis-host 6379

@@ -2,9 +2,14 @@ from django.db import models
 # Create your models here.
 from mptt.models import MPTTModel, TreeForeignKey
 
+
 class MyNode(MPTTModel):
     """A tree model using MPTT."""
     parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    class Meta:
+        abstract = True
+
+    # node logic
 
 
 class Product(models.Model):
@@ -22,12 +27,13 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-class Category(MPTTModel):
+
+class Category(MyNode):
     """A simple node Category"""
     name = models.CharField(max_length=100)
     img = models.FileField()
     slug = models.SlugField(max_length=200,unique=True)
-    products = models.ManyToManyField(Product, blank=True)
+    products = models.ManyToManyField(Product, null=True, blank=True)
 
     class MPTTMeta:
         order_insertion_by = ['name']

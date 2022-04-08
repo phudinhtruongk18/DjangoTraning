@@ -12,6 +12,8 @@ services:
       retries: 10
     ports:
       - 6379:6380
+    networks:
+      - app-tier
 
   db:
     image: postgres:13-alpine
@@ -24,6 +26,8 @@ services:
       - POSTGRES_USER=devuser
       - POSTGRES_PASSWORD=changeme
       - POSTGRES_HOST_AUTH_METHOD=trust
+    networks:
+      - app-tier
     healthcheck:
       # test base on evironment variable
       test: ["CMD-SHELL", "pg_isready -U devuser -d devdb"]
@@ -55,7 +59,8 @@ services:
 
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
-
+    networks:
+      - app-tier
     depends_on:
       - db
 
@@ -65,7 +70,13 @@ services:
     command: celery -A app worker -l info
     volumes:
       - ./app:/app
+    networks:
+      - app-tier
     depends_on:
       - app
       - redis
       - db
+      
+networks:
+  app-tier:
+    driver: bridge
