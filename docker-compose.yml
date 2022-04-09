@@ -65,11 +65,25 @@ services:
       - db
 
   celery:
-    build: .
     container_name: celery
+    restart: always
+    build:
+      context: .
     command: celery -A app worker -l info
     volumes:
       - ./app:/app
+    environment:
+      
+      - SECRET_KEY=devsecretkey
+      - DEBUG=1
+      - DB_HOST=db
+      - DB_NAME=devdb
+      - DB_USER=devuser
+      - DB_PASS=changeme
+
+      - CELERY_BROKER=redis://redis:6379/0
+      - CELERY_BACKEND=redis://redis:6379/0
+
     networks:
       - app-tier
     depends_on:

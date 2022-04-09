@@ -46,7 +46,7 @@ INSTALLED_APPS = [
     'django_celery_results',
     'core',
     'tree',
-    # 'healchecker',
+    'healchecker',
 ]
 
 MIDDLEWARE = [
