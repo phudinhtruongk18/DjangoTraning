@@ -20,7 +20,8 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include("healchecker.urls")),
+    path('healcheck/', include("healchecker.urls")),
+    # urls(r'^ht/', include('health_check.urls')),
 ]
 
 if settings.DEBUG:

@@ -43,64 +43,10 @@ restart: always
     do_more_stuff()
 }
 
-celery    |     return celery(auto_envvar_prefix="CELERY")
-celery    |   File "/py/lib/python3.9/site-packages/click/core.py", line 829, in __call__
-celery    |     return self.main(*args, **kwargs)
-celery    |   File "/py/lib/python3.9/site-packages/click/core.py", line 782, in main
-celery    |     rv = self.invoke(ctx)
-celery    |   File "/py/lib/python3.9/site-packages/click/core.py", line 1259, in invoke
-celery    |     return _process_result(sub_ctx.command.invoke(sub_ctx))
-celery    |   File "/py/lib/python3.9/site-packages/click/core.py", line 1066, in invoke
-celery    |     return ctx.invoke(self.callback, **ctx.params)
-celery    |   File "/py/lib/python3.9/site-packages/click/core.py", line 610, in invoke
-celery    |     return callback(*args, **kwargs)
-celery    |   File "/py/lib/python3.9/site-packages/click/decorators.py", line 21, in new_func
-celery    |     return f(get_current_context(), *args, **kwargs)
-celery    |   File "/py/lib/python3.9/site-packages/celery/bin/base.py", line 133, in caller
-celery    |     return f(ctx, *args, **kwargs)
-celery    |   File "/py/lib/python3.9/site-packages/celery/bin/worker.py", line 338, in worker
-celery    |     worker = app.Worker(
-celery    |   File "/py/lib/python3.9/site-packages/celery/worker/worker.py", line 94, in __init__
-celery    |     self.app.loader.init_worker()
-celery    |   File "/py/lib/python3.9/site-packages/celery/loaders/base.py", line 111, in init_worker
-celery    |     self.import_default_modules()
-celery    |   File "/py/lib/python3.9/site-packages/celery/loaders/base.py", line 105, in import_default_modules
-celery    |     raise response
-celery    |   File "/py/lib/python3.9/site-packages/celery/utils/dispatch/signal.py", line 276, in send
-celery    |     response = receiver(signal=self, sender=sender, **named)
-celery    |   File "/py/lib/python3.9/site-packages/celery/fixups/django.py", line 82, in on_import_modules
-celery    |     self.worker_fixup.validate_models()
-celery    |   File "/py/lib/python3.9/site-packages/celery/fixups/django.py", line 120, in validate_models
-celery    |     self.django_setup()
-celery    |   File "/py/lib/python3.9/site-packages/celery/fixups/django.py", line 116, in django_setup
-celery    |     django.setup()
-celery    |   File "/py/lib/python3.9/site-packages/django/__init__.py", line 24, in setup
-celery    |     apps.populate(settings.INSTALLED_APPS)
-celery    |   File "/py/lib/python3.9/site-packages/django/apps/registry.py", line 122, in populate
-celery    |     app_config.ready()
-celery    |   File "/py/lib/python3.9/site-packages/django/contrib/admin/apps.py", line 27, in ready
-celery    |     self.module.autodiscover()
-celery    |   File "/py/lib/python3.9/site-packages/django/contrib/admin/__init__.py", line 24, in autodiscover
-celery    |     autodiscover_modules('admin', register_to=site)
-celery    |   File "/py/lib/python3.9/site-packages/django/utils/module_loading.py", line 47, in autodiscover_modules
-celery    |     import_module('%s.%s' % (app_config.name, module_to_search))
-celery    |   File "/usr/local/lib/python3.9/importlib/__init__.py", line 127, in import_module
-celery    |     return _bootstrap._gcd_import(name[level:], package, level)
-celery    |   File "<frozen importlib._bootstrap>", line 1030, in _gcd_import
-celery    |   File "<frozen importlib._bootstrap>", line 1007, in _find_and_load
-celery    |   File "<frozen importlib._bootstrap>", line 986, in _find_and_load_unlocked
-celery    |   File "<frozen importlib._bootstrap>", line 680, in _load_unlocked
-celery    |   File "<frozen importlib._bootstrap_external>", line 850, in exec_module
-celery    |   File "<frozen importlib._bootstrap>", line 228, in _call_with_frames_removed
-celery    |   File "/py/lib/python3.9/site-packages/django/contrib/auth/admin.py", line 6, in <module>
-celery    |     from django.contrib.auth.forms import (
-celery    |   File "/py/lib/python3.9/site-packages/django/contrib/auth/forms.py", line 11, in <module>
-celery    |     from django.contrib.auth.tokens import default_token_generator
-celery    |   File "/py/lib/python3.9/site-packages/django/contrib/auth/tokens.py", line 117, in <module>
-celery    |     default_token_generator = PasswordResetTokenGenerator()
-celery    |   File "/py/lib/python3.9/site-packages/django/contrib/auth/tokens.py", line 18, in __init__
-celery    |     self.secret = self.secret or settings.SECRET_KEY
-celery    |   File "/py/lib/python3.9/site-packages/django/conf/__init__.py", line 90, in __getattr__
-celery    |     raise ImproperlyConfigured("The SECRET_KEY setting must not be empty.")
-celery    | django.core.exceptions.ImproperlyConfigured: The SECRET_KEY setting must not be empty.
-celery exited with code 1
+# Run all the tests in the animals.tests module
+$ ./manage.py test animals.tests
+
+
+# one line admin register
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@myproject.com', '123123')" | python manage.py shell
+

@@ -46,7 +46,18 @@ INSTALLED_APPS = [
     'django_celery_results',
     'core',
     'tree',
+    # -----------HEAL-------------------
     'healchecker',
+    # -----------HEAL-LIBRARY----------
+    'health_check',                             # required
+    'health_check.db',                          # stock Django health checkers
+    'health_check.cache',
+    'health_check.storage',
+    'health_check.contrib.migrations',
+    'health_check.contrib.celery',              # requires celery
+    'health_check.contrib.celery_ping',         # requires celery
+    'health_check.contrib.redis',               # requires Redis broker
+    # -----------HEAL-------------------
 ]
 
 MIDDLEWARE = [
@@ -149,3 +160,6 @@ CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
 # # </========== CONGIFGURE CELERY ===========>
+
+# FOR health_check.db 
+REDIS_URL = "redis://redis:6379/0"

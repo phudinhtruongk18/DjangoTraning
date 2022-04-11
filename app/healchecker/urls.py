@@ -1,8 +1,8 @@
 from django.urls import path,include
-from . import views
 
 app_name = 'healchecker'
 
 urlpatterns = [
-    path('',  views.total, name="total"),
+    # path('',  FukuView.as_view(), name="fuk"),
+    path(r'', include('health_check.urls')),
 ]

@@ -11,3 +11,4 @@ redis==3.5.3
 
 uWSGI>=2.0.19.1,<2.1
 
+django-health-check==3.16.5

@@ -11,7 +11,7 @@ WORKDIR /app
 EXPOSE 8000
 
 # Installing client libraries and any other package you need
-RUN apk update && apk add libpq
+# RUN apk update && apk add libp
 
 # Installing build dependencies
 # For python3 you need to add python3-dev *please upvote the comment

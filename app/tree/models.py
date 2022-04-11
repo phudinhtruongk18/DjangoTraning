@@ -33,10 +33,23 @@ class Category(MyNode):
     name = models.CharField(max_length=100)
     img = models.FileField()
     slug = models.SlugField(max_length=200,unique=True)
-    products = models.ManyToManyField(Product, null=True, blank=True)
 
     class MPTTMeta:
         order_insertion_by = ['name']
 
     def __str__(self):
         return self.name
+
+class CategoryItem(MyNode):
+    """Iteam exist in category"""
+    # user = models.ForeignKey(UserAccount, on_delete=models.CASCADE, null=True)
+
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE,null=True)
+
+    def __str__(self):
+        return self.name
+
+    def __unicode__(self):
+        return self.product
+# Account
