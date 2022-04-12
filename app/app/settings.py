@@ -48,13 +48,13 @@ INSTALLED_APPS = [
     'tree',
     # -----------HEAL-------------------
     'healchecker',
+    'mail',
     # -----------HEAL-LIBRARY----------
     'health_check',                             # required
     'health_check.db',                          # stock Django health checkers
     'health_check.cache',
     'health_check.storage',
     'health_check.contrib.migrations',
-    'health_check.contrib.celery',              # requires celery
     'health_check.contrib.celery_ping',         # requires celery
     'health_check.contrib.redis',               # requires Redis broker
     # -----------HEAL-------------------
@@ -72,10 +72,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'app.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates',],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -163,3 +164,13 @@ CELERY_RESULT_SERIALIZER = 'json'
 
 # FOR health_check.db 
 REDIS_URL = "redis://redis:6379/0"
+
+
+# # <=========== CONGIFGURE EMAIL ===========>
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'caythuearam2@gmail.com'
+EMAIL_HOST_PASSWORD = 'matkhaula1'
+EMAIL_PORT = 587
+# # </========== CONGIFGURE EMAIL ===========>
+

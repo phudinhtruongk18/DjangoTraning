@@ -57,6 +57,11 @@ services:
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - EMAIL_USE_TLS=1
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_HOST_USER=caythuearam2@gmail.com
+      - EMAIL_HOST_PASSWORD=matkhaula1
+      - EMAIL_PORT=587
 
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
@@ -84,6 +89,12 @@ services:
 
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0
+
+      - EMAIL_USE_TLS=1
+      - EMAIL_HOST=smtp.gmail.com
+      - EMAIL_HOST_USER=caythuearam2@gmail.com
+      - EMAIL_HOST_PASSWORD=matkhaula1
+      - EMAIL_PORT=587
 
     networks:
       - app-tier
