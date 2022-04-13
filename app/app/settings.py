@@ -44,11 +44,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_celery_results',
-    'core',
+    # -----------CORE-------------------
     'tree',
+    'user',
+    'mail',
+
     # -----------HEAL-------------------
     'healchecker',
-    'mail',
     # -----------HEAL-LIBRARY----------
     'health_check',                             # required
     'health_check.db',                          # stock Django health checkers
@@ -57,7 +59,14 @@ INSTALLED_APPS = [
     'health_check.contrib.migrations',
     'health_check.contrib.celery_ping',         # requires celery
     'health_check.contrib.redis',               # requires Redis broker
-    # -----------HEAL-------------------
+
+    # -----------COUNT-LIBRARY-------------------
+    'hitcount',
+    # -----------THUMBNAIL-LIBRARY-------------------
+    'sorl.thumbnail',
+    # -----------SITE-LIBRARY-------------------
+    'django.contrib.sites',
+
 ]
 
 MIDDLEWARE = [
@@ -174,3 +183,7 @@ EMAIL_HOST_PASSWORD = 'matkhaula1'
 EMAIL_PORT = 587
 # # </========== CONGIFGURE EMAIL ===========>
 
+
+AUTH_USER_MODEL = 'user.NomalUser'
+
+SITE_ID = 1

@@ -48,5 +48,17 @@ $ ./manage.py test animals.tests
 
 
 # one line admin register
-echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser('admin', 'admin@myproject.com', '123123')" | python manage.py shell
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(username='admin',email='admin@myproject.com', password='123123')" | python manage.py shell
+echo "from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(email='admin@myproject.com', password='123123',first_name='Dinh',last_name='Phu',username='admin')" | python manage.py shell
 
+# DELETE AN APP 
+    Step 1: empty the app, but leave it installed
+    remove all files from the app, except the folder "migrations"
+
+    Execute this command:
+    python manage.py makemigrations -n drop_all_tables my_app_to_remove
+    Leave my_app_to_remove in the file "settings.py".
+    Step 2: Deploy the changes
+    Update all projects. Tell the team mates to update their project and to run the migrations.
+    Step 3: remove "my_app_to_remove" from settings.py
+    Now remove "my_app_to_remove" from settings.py and deploy again.
