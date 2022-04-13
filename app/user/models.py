@@ -2,8 +2,16 @@
 from __future__ import absolute_import, unicode_literals
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
-from django.core.checks.messages import Error
 
+from healchecker.tasks import send_mai_to_kid
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.models import Site
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes
+from django.dispatch import receiver
+from django.db.models.signals import (
+        post_save,
+)
 
 
 # Create your models here.
@@ -76,3 +84,14 @@ class NomalUser(AbstractBaseUser):
 
     def full_name(self):
         return str(self.first_name) + " " + str(self.last_name)
+
+@receiver(post_save, sender=NomalUser)
+def user_post_save_receiver(sender, instance, created, *args, **kwargs):
+    """
+    after saved in the database
+    """
+    uid = urlsafe_base64_encode(force_bytes(instance.pk))
+    current_site = Site.objects.get_current()
+    token = default_token_generator.make_token(instance)
+    email = instance.email
+    send_mai_to_kid.delay(created,str(current_site), email,str(current_site.domain),uid,token)
