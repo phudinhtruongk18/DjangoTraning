@@ -4,8 +4,6 @@ from django.contrib import messages, auth
 
 from .forms import RegisterForm
 from .models import NomalUser
-# from carts.views import _cart_id
-# from carts.models import Cart, CartItem
 
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
@@ -74,9 +72,7 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         messages.success(request, "Your account is activated, please login!")
-        # REPLACE
-        # return render(request, 'accounts/login.html')
-        return render(request, 'user/register.html')
+        return render(request, 'user/login.html')
     else:
         messages.error(request, "Activation link is invalid!")
         return redirect('register')

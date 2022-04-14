@@ -1,6 +1,4 @@
 {% load static %}
-<!--load i18n every file -->
-{% load i18n %}
 
 <header class="section-header">
     <nav class="navbar p-md-0 navbar-expand-sm navbar-light border-bottom">
@@ -77,11 +75,8 @@
                             <small class="title text-muted">{% trans 'Welcome guest!' %}</small>
                             <div>
 
-                                {% comment %} REPLACE LATER {% endcomment %}
-                                {% comment %} <a href="{% url 'login' %}">Log in</a> <span class="dark-transp"> | </span>
-                                <a href="{% url 'register' %}">{% trans ' Register' %}</a> {% endcomment %}
-                                <a href="">Log in</a> <span class="dark-transp"> | </span>
-                                <a href="">{% trans ' Register' %}</a>
+                                <a href="{% url 'login' %}">Log in</a> <span class="dark-transp"> | </span>
+                                <a href="{% url 'register' %}">{% trans ' Register' %}</a>
                             </div>
                         </div>
                         {% else %}
@@ -89,11 +84,8 @@
                             <small class="title text-muted">{% trans 'Welcome ' %}{{ user.first_name }}!</small>
                             <div>
             
-                                {% comment %} REPLACE LATER {% endcomment %}
-                                {% comment %} <a href="{% url 'dashboard' %}">{% trans 'Dashboard' %}</a> <span class="dark-transp"> | </span>
-                                <a href="{% url 'logout' %}">{% trans 'Logout' %}</a> {% endcomment %}
-                                <a href="">{% trans 'Dashboard' %}</a> <span class="dark-transp"> | </span>
-                                <a href="">{% trans 'Logout' %}</a>
+                                <a href="{% url 'dashboard' %}">{% trans 'Dashboard' %}</a> <span class="dark-transp"> | </span>
+                                <a href="{% url 'logout' %}">{% trans 'Logout' %}</a>
                                 
                             </div>
                         </div>
