@@ -48,7 +48,6 @@ INSTALLED_APPS = [
     'tree',
     'user',
     'mail',
-
     # -----------HEAL-------------------
     'healchecker',
     # -----------HEAL-LIBRARY----------
@@ -155,7 +154,10 @@ STATIC_URL = '/static/static/'
 MEDIA_URL = '/static/media/'
 
 MEDIA_ROOT = '/vol/web/media'
+
+# DEBUG STATE
 STATIC_ROOT = '/vol/web/static'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -9,7 +9,7 @@ class DummyModel(models.Model):
         verbose_name = 'Heal Check Manually'
 
 def check_admin(user):
-   return user.is_superuser
+   return user.is_superadmin
 
 @user_passes_test(check_admin)
 def dummy_view(request):

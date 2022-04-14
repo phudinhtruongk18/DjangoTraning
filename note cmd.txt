@@ -62,3 +62,6 @@ echo "from django.contrib.auth import get_user_model; User = get_user_model(); U
     Update all projects. Tell the team mates to update their project and to run the migrations.
     Step 3: remove "my_app_to_remove" from settings.py
     Now remove "my_app_to_remove" from settings.py and deploy again.
+
+
+REPLACE LATER: template register navbar

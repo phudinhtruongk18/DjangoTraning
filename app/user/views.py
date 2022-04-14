@@ -7,6 +7,9 @@ from .models import NomalUser
 # from carts.views import _cart_id
 # from carts.models import Cart, CartItem
 
+from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.tokens import default_token_generator
+
 # Create your views here.
 def register(request):
     if request.method == 'POST':
@@ -20,21 +23,17 @@ def register(request):
             username = email.split('@')[0]
 
             user = NomalUser.objects.create_user(first_name=first_name,
-                                                last_name=last_name, 
-                                                email=email, 
-                                                username=username, 
-                                                password=password,
-                                                is_active=True)
+                                                last_name=last_name, email=email, username=username, password=password)
             user.phone_number = phone_number
             user.save()
-
+            messages.success(request, "Confirm your email address to complete the registration")
             return redirect('register')
         else:
             messages.error(request, "Register failed!")
     else:
         form = RegisterForm()
     context = {'form': form}
-    return render(request, 'accounts/register.html', context=context)
+    return render(request, 'user/register.html', context=context)
 
 
 def login(request):
@@ -63,6 +62,24 @@ def login(request):
         'password ': password if 'password' in locals() else '',
     }
     return render(request, 'user/login.html', context=context)
+
+def activate(request, uidb64, token):
+    try:
+        uid = urlsafe_base64_decode(uidb64).decode()
+        user = NomalUser.objects.get(pk=uid)
+    except Exception:
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        user.is_active = True
+        user.save()
+        messages.success(request, "Your account is activated, please login!")
+        # REPLACE
+        # return render(request, 'accounts/login.html')
+        return render(request, 'user/register.html')
+    else:
+        messages.error(request, "Activation link is invalid!")
+        return redirect('register')
 
 
 @login_required(login_url="login")

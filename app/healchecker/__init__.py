@@ -1,1 +1,1 @@
-"""This use for heal check and do async task with celery"""
+"""This use for heal check and do thread task with celery"""

@@ -11,7 +11,7 @@ from sorl.thumbnail import get_thumbnail
 
 class MyNode(MPTTModel):
     """A tree model using MPTT."""
-    parent = TreeForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
+    parent = TreeForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
 
     class Meta:
         abstract = True
@@ -23,7 +23,6 @@ class Product(models.Model):
     """A product can have many categories"""
     user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,null=True)
     name = models.CharField(max_length=30,unique = True)
-    img = models.FileField()
     date_added = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=200,unique=True, blank=True, editable=False)
     hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
@@ -47,6 +46,7 @@ class Catalog(MyNode):
     name = models.CharField(max_length=100,unique = True)
     date_added = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=200,unique=True, blank=True, editable=False)
+    image = models.ImageField(null=True, blank=True)
     hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
      related_query_name='hit_count_generic_relation')
 
@@ -87,7 +87,10 @@ class Photo(models.Model):
     product = models.ForeignKey(
         Product, on_delete=models.SET_NULL, null=True, blank=True)
     image = models.ImageField(null=False, blank=False)
-    description = models.TextField()
+    num_of_images = models.IntegerField(default=0)
+
+    class Meta:
+        unique_together = ('product', 'num_of_images',)
 
     @property
     def thumbnail(self):
@@ -96,16 +99,16 @@ class Photo(models.Model):
         return None
 
     def __str__(self):
-        return self.description
+        return f"{self.product}-{self.num_of_images}"
 
 
 class Comment(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(NomalUser, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=100, blank=True)
-    review = models.TextField(max_length=500, blank=True)
-    rating = models.FloatField()
+    content = models.TextField(max_length=500, blank=True)
     ip = models.CharField(max_length=20, blank=True)
-    status = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.product}-{self.created_at}"
