@@ -3,7 +3,8 @@ from django.test import TestCase
 from .healcheck import HealChecker
 
 class FukuViewTest(TestCase):
-    def test_fuku(self,**kwargs):
+
+    def test_sang(self,**kwargs):
         # self.assertEqual(FukuView.get_json(), None)
         result = HealChecker()
         result.get_json()

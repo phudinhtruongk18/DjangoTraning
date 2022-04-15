@@ -65,7 +65,8 @@ INSTALLED_APPS = [
     'sorl.thumbnail',
     # -----------SITE-LIBRARY-------------------
     'django.contrib.sites',
-
+    # -----------OAUTH-LIBRARY-------------------
+    'social_django',
 ]
 
 MIDDLEWARE = [
@@ -113,7 +114,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -155,12 +155,12 @@ MEDIA_URL = '/static/media/'
 
 MEDIA_ROOT = '/vol/web/media'
 
-# STATIC_ROOT = '/vol/web/static'
+STATIC_ROOT = '/vol/web/static'
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-    '/vol/web/static',
-]
+# STATICFILES_DIRS = [
+#     BASE_DIR / "static",
+#     '/vol/web/static',
+# ]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -188,7 +188,21 @@ EMAIL_HOST_PASSWORD = 'matkhaula1'
 EMAIL_PORT = 587
 # # </========== CONGIFGURE EMAIL ===========>
 
+SITE_ID = 1
+
+# # <=========== CONGIFGURE AUTH ===========>
+AUTHENTICATION_BACKENDS = (
+    'social_core.backends.google.GoogleOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '897327147963-57bk3t7jdkf3o6e25ff8j5srfqlasjjr.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 AUTH_USER_MODEL = 'user.NomalUser'
+LOGIN_REDIRECT_URL = 'login'
+SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:8000']
 
-SITE_ID = 1
+# # </========== CONGIFGURE AUTH ===========>
+
+# import social_django

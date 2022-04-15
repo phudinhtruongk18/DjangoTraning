@@ -31,7 +31,10 @@
             </form>
         </div> <!-- card-body.// -->
     </div> <!-- card .// -->
-    <p class="text-center mt-4">Don't have account? <a href="{% url 'register' %}">Sign up</a></p>
+    <p class="text-center mt-4">Don't have account? 
+        <a href="{% url 'register' %}">Sign up</a>
+         or 
+        <a href="{% url 'social:begin' 'google-oauth2' %}">Sigin with <i class="fa fa-google-plus" aria-hidden="true"></i></a></p>
     <br><br>
     <!-- ============================ COMPONENT LOGIN  END.// ================================= -->
 </section>

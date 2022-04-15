@@ -23,6 +23,7 @@ urlpatterns = [
     path('healcheck/', include("healchecker.urls")),
     path('', include("user.urls")),
     # urls(r'^ht/', include('health_check.urls')),
+    path('', include('social_django.urls', namespace='social'))
 ]
 
 if settings.DEBUG:

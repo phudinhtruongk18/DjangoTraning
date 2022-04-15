@@ -16,7 +16,8 @@ from django.db.models.signals import (
 
 # Create your models here.
 class MyAccountManager(BaseUserManager):
-    def create_user(self, first_name, last_name, username, email, password=None):
+    def create_user(self, username, email, password=None, first_name="", last_name="",**extra_fields):
+        print("**extra_fields->",extra_fields)
         if not email:
             raise ValueError('Email address is required')
 

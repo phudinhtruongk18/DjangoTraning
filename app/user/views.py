@@ -35,7 +35,13 @@ def register(request):
 
 
 def login(request):
-    if request.method == "POST":
+    # check login gooogle
+    if request.user.is_authenticated:
+        print(request.user)
+        messages.success(request, "Login successful",request.user.username,request.user.is_active)
+        return redirect('dashboard')
+        
+    elif request.method == "POST":
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = auth.authenticate(email=email, password=password)
