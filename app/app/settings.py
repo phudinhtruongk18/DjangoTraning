@@ -158,9 +158,13 @@ MEDIA_ROOT = '/vol/web/media'
 STATIC_ROOT = '/vol/web/static'
 
 # STATICFILES_DIRS = [
-#     BASE_DIR / "static",
 #     '/vol/web/static',
 # ]
+
+# All settings common to all environments
+# PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
+# STATIC_URL = '/vol/web/static/'
+# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field

@@ -22,6 +22,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('healcheck/', include("healchecker.urls")),
     path('', include("user.urls")),
+    path('', include("tree.urls")),
     # urls(r'^ht/', include('health_check.urls')),
     path('', include('social_django.urls', namespace='social'))
 ]

@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load hitcount_tags %}
+
+{% block content %}
+<!-- ========================= SECTION PAGETOP ========================= -->
+<section class="section-pagetop bg">
+	<div class="container">
+		<h2 class="title-page">Products</h2>
+	</div>
+	<!-- container //  -->
+</section>
+<!-- ========================= SECTION INTRO END// ========================= -->
+<!-- ========================= SECTION CONTENT ========================= -->
+<section class="section-content padding-y">
+	<div class="container">
+		<div class="row">
+			<aside class="col-md-3">
+				<div class="card">
+					<article class="filter-group">
+						<header class="card-header">
+							<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
+								<i class="icon-control fa fa-chevron-down"></i>
+								<h6 class="title">Available products in {{ catalog }}</h6>
+								{% comment %} get all product in ul li tag {% endcomment %}
+								
+								<ul class="list-unstyled list-lg">
+									{% for product in paged_products %}
+									<li>
+										<a>{{ product.product.name }}</a>
+									</li>
+									{% endfor %}
+							</a>
+						</header>
+						<div class="filter-content collapse show" id="collapse_1">
+							{% comment %} <div class="card-body">
+								<ul class="list-menu">
+									{% for product in all_product %}
+									<li>
+										<a href="{{ product.get_url }}">{{ product.name }}</a>
+									</li>
+									{% endfor %}
+								</ul>
+							</div> {% endcomment %}
+							<!-- card-body.// -->
+						</div>
+					</article>
+
+				</div>
+				<!-- card.// -->
+			</aside>
+			<!-- col.// -->
+			
+			<main class="col-md-9">
+				<header class="border-bottom mb-4 pb-3">
+					<div class="form-inline">
+						<span class="mr-md-auto"><b>{{ products_count }}</b> products found</span>
+					</div>
+				</header>
+				<!-- sect-heading -->
+
+				<div class="row">
+					{% for product in paged_products %}
+					<div class="col-md-4">
+						<figure class="card card-product-grid">
+							<div class="img-wrap">
+								{% if  product.thumbnail_url != '' %}
+                                {% comment %} REPLACE LATER SOME IMAGE {% endcomment %}
+									<img src="{{ product.thumbnail_url }}"/>
+								{% endif %}
+							</div>
+							<figcaption class="info-wrap">
+								<div class="fix-height">
+									<a href="{{ product.product.get_url }}" class="title">{{ product.product.name }}</a>
+									<div class="price-wrap mt-2">
+                                        {% comment %} REPLACE LATER {% endcomment %}
+										<span class="price">Views: {% get_hit_count for product.product %}</span>
+
+									</div>
+								</div>
+								<a href="{{ product.product.get_url }}" class="btn btn-block btn-primary">View detail</a>
+							</figcaption>
+						</figure>
+					</div>
+					{% endfor %}
+				</div>
+				{% if paged_products %}
+				<nav class="mt-4" aria-label="Page navigation sample">
+					<ul class="pagination">
+						{% if paged_products.has_previous %}
+						<li class="page-item">
+							<a class="page-link" href="{% url 'products_by_catalog' catalog.slug %}?page=1">First</a>
+						</li>
+						<li class="page-item">
+							<a class="page-link"
+								href="{% url 'products_by_catalog' catalog.slug %}?page={{paged_products.previous_page_number}}">Previous</a>
+						</li>
+						{% else %}
+						<li class="page-item disabled">
+							<a class="page-link" href="#">First</a>
+						</li>
+						<li class="page-item disabled">
+							<a class="page-link" href="#">Previous</a>
+						</li>
+						{% endif %}
+						{% if paged_products.number|add:'-2' >= 1 %}
+						<li class="page-item">
+							<a class="page-link" href="{% url 'products_by_catalog' catalog.slug %}?page={{ paged_products.number|add:'-2' }}">&hellip;</a>
+						</li>
+						{% endif %}
+                            {% for page in paged_products.paginator.page_range %}
+                                {% if paged_products.number|add:'-1' <= page and page <= paged_products.number|add:'1' %}
+                                    {% if page == paged_products.number %}
+                                        <li class="page-item active">
+                                            <a class="page-link" href="{% url 'products_by_catalog' catalog.slug %}?page={{ page }}">{{ page }}</a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="{% url 'products_by_catalog' catalog.slug %}?page={{ page }}">{{ page }}</a>
+                                        </li>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+						{% if paged_products.number|add:'2' <= paged_products.paginator.num_pages %}
+						<li class="page-item">
+							<a class="page-link" href="{% url 'products_by_catalog' catalog.slug %}?page={{ paged_products.number|add:'2' }}">&hellip;</a>
+						</li>
+						{% endif %}
+						{% if paged_products.has_next %}
+						<li class="page-item">
+							<a class="page-link" href="{% url 'products_by_catalog' catalog.slug %}?page={{paged_products.next_page_number}}">Next</a>
+						</li>
+						<li class="page-item">
+							<a class="page-link"
+								href="{% url 'products_by_catalog' catalog.slug %}?page={{ paged_products.paginator.num_pages }}">Last</a>
+						</li>
+						{% else %}
+						<li class="page-item disabled">
+							<a class="page-link" href="#">Next</a>
+						</li>
+						<li class="page-item disabled">
+							<a class="page-link" href="#">Last</a>
+						</li>
+						{% endif %}
+					</ul>
+				</nav>
+				{% endif %}
+			</main>
+			<!-- col.// -->
+		</div>
+	</div>
+	<!-- container .//  -->
+</section>
+<!-- ========================= SECTION CONTENT END// ========================= -->
+{% endblock %}

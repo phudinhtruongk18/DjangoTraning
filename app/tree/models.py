@@ -9,6 +9,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 
 from sorl.thumbnail import get_thumbnail
 
+from django.urls import reverse
+
 class MyNode(MPTTModel):
     """A tree model using MPTT."""
     parent = TreeForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
@@ -26,7 +28,7 @@ class Product(models.Model):
     date_added = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=200,unique=True, blank=True, editable=False)
     hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
-     related_query_name='hit_count_generic_relation')
+    related_query_name='hit_count_generic_relation')
 
     def save(self, *args, **kwargs):
         if self.name:
@@ -39,6 +41,8 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
+    def get_url(self):
+        return reverse('product', args=[self.slug])
 
 class Catalog(MyNode):
     """A simple node Category"""
@@ -48,7 +52,7 @@ class Catalog(MyNode):
     slug = models.SlugField(max_length=200,unique=True, blank=True, editable=False)
     image = models.ImageField(null=True, blank=True)
     hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
-     related_query_name='hit_count_generic_relation')
+        related_query_name='hit_count_generic_relation')
 
     def save(self, *args, **kwargs):
         if self.name:
@@ -61,6 +65,8 @@ class Catalog(MyNode):
     def __str__(self):
         return self.name
 
+    def get_url(self):
+        return reverse('products_by_catalog', args=[self.slug])
 
 class ProductInCatalog(models.Model):
     """Iteam exist in catalog"""
@@ -76,6 +82,17 @@ class ProductInCatalog(models.Model):
 
     def __unicode__(self):
         return str(self.catalog) + " - " +str(self.product)
+
+    @property
+    def thumbnail_url(self):
+        # get first url photo or none
+        try:
+            photo = Photo.objects.filter(product=self.product)[:1].get()
+            return photo.thumbnail.url
+            # return photo.image.url
+        except Exception as e:
+            print("Log photo:",e)
+            return None
 
 
 class Photo(models.Model):
@@ -95,7 +112,7 @@ class Photo(models.Model):
     @property
     def thumbnail(self):
         if self.image:
-            return get_thumbnail(self.image, '50x50', quality=90)
+            return get_thumbnail(self.image, '350x350', quality=90)
         return None
 
     def __str__(self):
