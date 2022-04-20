@@ -15,3 +15,10 @@
 #     return results
 
 # list(get_decendants(MyNode.objects.get(pk=1)))
+
+# create 2 example list
+list1 = [1,2,3,4,5,6,7,8,9,10]
+list2 = ["a","b","c","d","e","f","g","h","i","j"]
+# check value
+for x,y in zip(list1,list2):
+    print(x,y)

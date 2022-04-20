@@ -24,9 +24,9 @@
             <div class="row align-items-center">
                 <div class="col-lg-2 col-md-3 col-6">
 
-                    {% comment %} REPLACE LATER {% endcomment %}
-                    {% comment %} <a href="{% url 'shopping_center' %}" class="brand-wrap"> {% endcomment %}
-                    <a href="" class="brand-wrap">
+                    {% comment %}  {% endcomment %}
+                    <a href="{% url 'catalog' %}" class="brand-wrap">
+                    {% comment %} <a href="" class="brand-wrap"> {% endcomment %}
 
                         <img class="logo" src="{% static './images/logo.png' %}">
                     </a> <!-- brand-wrap.// -->
@@ -38,8 +38,7 @@
                         </button>
                         <div class="dropdown-menu">
 
-                            {% comment %} REPLACE LATER {% endcomment %}
-                            {% comment %} <a class="dropdown-item" href="{% url 'store' %}">{% trans 'All products' %}</a> {% endcomment %}
+                            <a class="dropdown-item" href="{% url 'catalog' %}">{% trans 'All products' %}</a>
                             <a class="dropdown-item" href="">{% trans 'All products' %}</a>
 
                             {% for category in links %}
@@ -49,9 +48,6 @@
                     </div> <!-- category-wrap.// -->
                 </div> <!-- col.// -->
 
-                {% comment %} REPLACE LATER {% endcomment %}
-                {% comment %} <a href="{% url 'store' %}" class="btn btn-outline-primary">{% trans 'Store' %}</a> {% endcomment %}
-                <a href="" class="btn btn-outline-primary">{% trans 'Store' %}</a>
 
                 <div class="col-lg  col-md-6 col-sm-12 col">
     

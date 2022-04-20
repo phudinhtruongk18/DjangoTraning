@@ -34,7 +34,7 @@ def setup_periodic_tasks(sender, **kwargs):
         heal_check_every_minute.s(), 
         name='heal check every minute')
 
-    # Executes every Monday morning at 7:30 a.m.
+    # Executes every morning at 7:30 a.m.
     sender.add_periodic_task(
         crontab(hour=7, minute=30),
         daily_task.s(),

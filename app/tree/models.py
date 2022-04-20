@@ -44,6 +44,19 @@ class Product(models.Model):
     def get_url(self):
         return reverse('product', args=[self.slug])
 
+    @property
+    def thumb(self):
+        # get first url photo or ''
+        try:
+            photo = Photo.objects.filter(product=self)[:1].get()
+            print("lof,",photo.thumbnail.url)
+            return photo.thumbnail.url
+            # return photo.image.url
+        except Exception as e:
+            print("Log photo:",e)
+            return ''
+
+
 class Catalog(MyNode):
     """A simple node Category"""
     user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,null=True)
@@ -67,6 +80,7 @@ class Catalog(MyNode):
 
     def get_url(self):
         return reverse('products_by_catalog', args=[self.slug])
+
 
 class ProductInCatalog(models.Model):
     """Iteam exist in catalog"""
@@ -106,8 +120,13 @@ class Photo(models.Model):
     image = models.ImageField(null=False, blank=False)
     num_of_images = models.IntegerField(default=0)
 
+    def save(self, *args, **kwargs):
+        if self.image:
+            self.num_of_images = Photo.objects.filter(product=self.product).count()
+        super(Photo, self).save(*args, **kwargs)
+
     class Meta:
-        unique_together = ('product', 'num_of_images',)
+        unique_together = ('product', 'num_of_images','id')
 
     @property
     def thumbnail(self):
