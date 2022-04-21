@@ -11,6 +11,7 @@
                 <!--   SIDEBAR   -->
                 <ul class="list-group">
                     <a class="list-group-item active" href="#"> My account </a>
+                    <a class="list-group-item" href="{% url 'user_manage_view' %}">Manage Catalog and Product</a>
                     <a class="list-group-item" href="#">Change information </a>
                     {% comment %} REPLACE LATER {% endcomment %}
                     {% comment %} <a class="list-group-item" href="{% url 'change_password' %}">Change password </a> {% endcomment %}
@@ -37,7 +38,7 @@
                     {% include "includes/alerts.html" %}
                     <div class="jumbotron p-5 p-md-5 text-black rounded bg-light">
                         <div class="p-md-5 px-5">
-                            <h1 class="display-5 font-italic">Let's find out your favorite </h1>
+                            <h1 class="display-5 font-italic">Create your favorite </h1>
                             <h1 class="display-4 font-italic">Catalog and product!</h1>
                             {% comment %} <p class="lead my-3">
                                 Phu Dinh give you a paypal sandbox account UP TO 
@@ -45,7 +46,7 @@
                                 ID: sb-6j3tu7212034@personal.example.com
                                 Password: 123123123
                             </p> {% endcomment %}
-                            <p class="display-2"><a class="font-italic" href="{% url 'dashboard' %}" class="font-weight-bold">Check now</a></p>
+                            <p class="display-2"><a class="font-italic" href="{% url 'user_manage_view' %}" class="font-weight-bold">Check now</a></p>
                         </div>
                     </div>
                 </div>  <!-- container //  -->

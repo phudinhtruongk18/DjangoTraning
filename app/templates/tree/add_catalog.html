@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Add catalog | Aram Catalog
+{% endblock %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="container">
+        <div class="container">
+            <h2 class="title-page">Add catalog</h2>
+        </div>
+
+        </header>
+
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                {% comment %} <a href="{% url 'gallery' %}" class="btn btn-dark my-3">Go Back</a> {% endcomment %}
+                <div class="card">
+
+                    {% include "includes/alerts.html" %}
+
+                    <form method='POST' action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="form-group m-3">
+                            <label>Select parent catalog</label>
+                            <select name="parent_catalog" class="form-control">
+                                <option value='none'>Select parent catalog...</option>
+                                {% for catalog in catalogs %}
+                                <option value='{{catalog.id}}'>{{catalog.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group m-3">
+                            <label>Catalog Name</label>
+                            <input required name="catalog_new" type="text" placeholder="Enter a Catalog Name"
+                                class="form-control">
+                        </div>
+                        
+                        <div class="form-group m-3">
+                            <label>Upload image</label>
+                            <input required name="image" type="file">
+                        </div>
+
+                        <button type='submit' class="btn btn-primary m-3">Submit</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

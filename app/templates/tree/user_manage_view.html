@@ -39,8 +39,8 @@ Manage | Aram Catalog
 
                                         <td>
                                             <a href="{{ catalog.get_url }}" class="btn btn-info">View</a>
-                                            <a href="" class="btn btn-outline-secondary">Edit</a>
-                                            <a href="" class="btn btn-danger">Delete</a>
+                                            <a href="{% url 'edit_catalog' catalog.id %}" class="btn btn-outline-secondary">Edit</a>
+                                            <a href="{% url 'delete_catalog' catalog.id %}" class="btn btn-danger">Delete</a>
                                         </td>
                                         <td>Me</td>
 
@@ -63,7 +63,6 @@ Manage | Aram Catalog
         <div class="row justify-content-center">
             {% comment %} list all catalog with edit delete button {% endcomment %}
             
-    
             {% for product,thumb in product_with_thumb %}
             <div class="col-lg-4">
                 <div class="card">
@@ -82,15 +81,12 @@ Manage | Aram Catalog
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 <a href="{{ product.get_url }}" class="btn btn-info">View</a>
-                                <a href="{{ product.id }}" class="btn btn-outline-secondary">Edit</a>
-                                <a href="{{ product.id }}" class="btn btn-danger">Delete</a>
+                                <a href="{% url 'edit_product' product.id %}" class="btn btn-outline-secondary">Edit</a>
+                                <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Delete</a>
                             </div>
                             <small class="text-muted">by me</small>
                         </div>
-                        
-
                     </div>
-
 
                 </div>
             </div>

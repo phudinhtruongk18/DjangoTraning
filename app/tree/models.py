@@ -29,6 +29,11 @@ class Product(models.Model):
     slug = models.SlugField(max_length=200,unique=True, blank=True, editable=False)
     hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
     related_query_name='hit_count_generic_relation')
+    price = models.DecimalField(max_digits=8, decimal_places=2,default=0)
+
+    @property
+    def price_display(self):
+        return "$%s" % self.price
 
     def save(self, *args, **kwargs):
         if self.name:
@@ -80,6 +85,14 @@ class Catalog(MyNode):
 
     def get_url(self):
         return reverse('products_by_catalog', args=[self.slug])
+
+    @property
+    def thumbnail_url(self):
+        # get first url photo or none
+        if self.image:
+            return get_thumbnail(self.image, '350x350', quality=90).url
+        return None
+
 
 
 class ProductInCatalog(models.Model):

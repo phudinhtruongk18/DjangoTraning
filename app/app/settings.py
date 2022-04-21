@@ -155,11 +155,12 @@ MEDIA_URL = '/static/media/'
 
 MEDIA_ROOT = '/vol/web/media'
 
-STATIC_ROOT = '/vol/web/static'
-
-# STATICFILES_DIRS = [
-#     '/vol/web/static',
-# ]
+if DEBUG:
+    STATIC_ROOT = '/vol/web/static'
+else:
+    STATICFILES_DIRS = [
+        '/vol/web/static',
+    ]
 
 # All settings common to all environments
 # PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))

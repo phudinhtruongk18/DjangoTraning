@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+Edit catalog | Aram Catalog
+{% endblock %}
+
+{% block content %}
+<section class="section-content padding-y bg">
+    <div class="container">
+        <div class="container">
+            <h2 class="title-page">Edit catalog</h2>
+        </div>
+
+        </header>
+
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                {% comment %} <a href="{% url 'gallery' %}" class="btn btn-dark my-3">Go Back</a> {% endcomment %}
+                <div class="card">
+
+                    {% include "includes/alerts.html" %}
+
+                    <form method='POST' action="" enctype="multipart/form-data">
+                        {% csrf_token %}
+
+                        <div class="form-group m-3">
+                            <label>Select parent catalog</label>
+                            <select name="parent_catalog" class="form-control">
+                                <option value='{{ catalog.parent.id }}'>{{ catalog.parent.name }}</option>
+                                {% for catalog_tmp in catalogs %}
+                                {% comment %} active where catalog is picked {% endcomment %}
+                                    <option value="{{catalog_tmp.id}}" 
+                                        >{{catalog_tmp.name}}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class="form-group m-3">
+                            <label>Catalog Name</label>
+                            <input required name="catalog_new" type="text" placeholder="Enter a Catalog Name"
+                                class="form-control" value="{{ catalog.name }}">
+                        </div>
+                        
+                        <div class="form-group m-3">
+                            <label>Change catalog image</label>
+                            <label>(Empty to keep old image)</label>
+                            <input name="image" type="file">
+                        </div>
+                        
+                        {% if catalog.image != '' %}
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <figure class="card card-product-grid">
+                                        <div class="img-wrap">
+                                            <a href="{{ catalog.thumbnail_url }}" target="_blank">
+                                                <img src="{{ catalog.thumbnail_url }}" class="img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                        {% comment %} <a href="{% url 'delete_photo' photo.id %}">Delete</a> {% endcomment %}
+                                    </figure>
+                                </div>
+                            </div>
+                        {% endif %}
+                        
+                        <button type='submit' class="btn btn-primary m-3">Submit</button>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

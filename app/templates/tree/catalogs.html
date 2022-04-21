@@ -59,6 +59,8 @@
 								{% if  catalog.image != '' %}
                                 {% comment %} REPLACE LATER SOME IMAGE {% endcomment %}
 									<img src="{{ catalog.image.url }}"/>
+								{% else %}
+									<img src="{% static 'images/no-image.jpg' %}"/>
 								{% endif %}
 							</div>
 							<figcaption class="info-wrap">

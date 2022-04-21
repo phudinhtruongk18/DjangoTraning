@@ -53,6 +53,10 @@
                     <article class="content-body">
                         <h2 class="title">{{ product.name }}</h2>
                         <div class="price-wrap mt-2">
+                            <span class="price">Price: {{ product.price_display }}</span>
+                        </div>
+
+                        <div class="price-wrap mt-2">
                             {% comment %} REPLACE LATER {% endcomment %}
                             <span class="price">Views: {% get_hit_count for product %}</span>
 

@@ -34,12 +34,12 @@
                 <div class="col-lg col-sm col-md col-6 flex-grow-0">
                     <div class="category-wrap dropdown d-inline-block float-right">
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-                            <i class="fa fa-bars"></i>{% trans 'All category' %}
+                            <i class="fa fa-bars"></i>{% trans 'Manage' %}
                         </button>
                         <div class="dropdown-menu">
 
-                            <a class="dropdown-item" href="{% url 'catalog' %}">{% trans 'All products' %}</a>
-                            <a class="dropdown-item" href="">{% trans 'All products' %}</a>
+                            <a class="dropdown-item" href="{% url 'user_manage_view' %}">{% trans 'Catalogs' %}</a>
+                            <a class="dropdown-item" href="{% url 'user_manage_view' %}">{% trans 'Products' %}</a>
 
                             {% for category in links %}
                             <a class="dropdown-item" href="{{ category.get_url }}">{{ category.category_name }}</a>

@@ -102,7 +102,6 @@ class ProductDetailView(HitCountDetailView):
         photos = Photo.objects.all().filter(product=product)
         # get all comments for product
         comments = Comment.objects.all().filter(product=product)
-        print(comments)
         context.update({
             'comments': comments,
             'product': product,
@@ -333,3 +332,120 @@ def delete_photo(request, photo_id):
 #             return redirect(url)
 #     messages.error(request, "Add photo false!")
 #     return redirect(url)
+
+# delete product if product is created by user
+@login_required(login_url='login')
+def delete_product(request, product_id):
+    url = request.META.get('HTTP_REFERER')
+    # check login and check user
+    try:
+        product_id = int(product_id)
+        product = Product.objects.get(id = product_id)
+    except Product.DoesNotExist:
+        messages.error(request, "Product does not exist!")
+        return redirect(url)
+
+    if product.user.id == request.user.id:
+        product.delete()
+        messages.success(request, "Your product has been deleted!")
+        return redirect(url)
+    
+    messages.error(request, "Delete product false!")
+    return redirect(url)
+
+# create catalog with image(optional) if user is login
+@login_required(login_url='login')
+def add_catalog(request):
+    # get catalogs to get parent catalog 
+    catalogs = Catalog.objects.all()
+
+    if request.method == 'POST':
+        data = request.POST
+        image = request.FILES.get('image')
+        name = data['catalog_new']
+        parent_catalog = data.get('parent_catalog')
+        # get parent catalog
+        try:
+            parent_catalog = Catalog.objects.get(id=int(parent_catalog))
+        except Catalog.DoesNotExist:
+            messages.error(request, "Parent catalog does not exist!")
+            return render(request, 'tree/add_catalog.html', {'catalogs':catalogs})
+            
+        user = request.user
+        catalog = Catalog.objects.create(
+            parent=parent_catalog,
+            name=name,
+            user=user,
+            image = image
+        )
+        catalog.save()
+        messages.info(request, "Create catalog success!")
+        return redirect('add_catalog')
+    
+    context = {
+        'catalogs':catalogs,
+    }
+    return render(request, 'tree/add_catalog.html', context)
+
+# delete catalog if user is login
+@login_required(login_url='login')
+def delete_catalog(request, catalog_id):
+    url = request.META.get('HTTP_REFERER')
+    # check login and check user
+    try:
+        catalog_id = int(catalog_id)
+        catalog = Catalog.objects.get(id = catalog_id)
+    except Catalog.DoesNotExist:
+        messages.error(request, "Catalog does not exist!")
+        return redirect(url)
+
+    if catalog.user.id == request.user.id:
+        catalog.delete()
+        messages.success(request, "Your catalog has been deleted!")
+        return redirect(url)
+    
+    messages.error(request, "Delete catalog false!")
+    return redirect(url)
+
+# edit catalog if user is login
+@login_required(login_url='login')
+def edit_catalog(request, catalog_id):
+    url = request.META.get('HTTP_REFERER')
+    # check login and check user
+    try:
+        catalog_id = int(catalog_id)
+        catalog = Catalog.objects.get(id = catalog_id)
+    except Catalog.DoesNotExist:
+        messages.error(request, "Catalog does not exist!")
+        return redirect(url)
+
+    catalogs = Catalog.objects.all()
+
+    if catalog.user.id == request.user.id:
+        if request.method == 'GET':
+            context = {
+                'catalog':catalog,
+                'catalogs':catalogs,
+            }
+            return render(request, 'tree/edit_catalog.html', context)
+        elif request.method == 'POST':
+            data = request.POST
+            image = request.FILES.get('image')
+            name = data['catalog_new']
+            parent_catalog = data.get('parent_catalog')
+            # get parent catalog
+            try:
+                parent_catalog = Catalog.objects.get(id=int(parent_catalog))
+            except Catalog.DoesNotExist:
+                messages.error(request, "Parent catalog does not exist!")
+                return render(request, 'tree/edit_catalog.html', {'catalog':catalog})
+            
+            catalog.name = name
+            catalog.parent = parent_catalog
+            if image:
+                catalog.image = image
+            catalog.save()
+            messages.info(request, "Update catalog success!")
+            return redirect('edit_catalog', catalog_id=catalog_id)
+    messages.error(request, "Update catalog false!")
+    return redirect(url)
