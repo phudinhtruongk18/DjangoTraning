@@ -6,8 +6,8 @@ from django.db.utils import IntegrityError
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
-from catalog.models import Catalog
-from .models import ProductInCatalog
+from category.models import Category
+from .models import ProductInCategory
 
 
 # <---------------------- PRODUCT VIEW ---------------------->
@@ -42,8 +42,8 @@ class ProductDetailView(HitCountDetailView):
 def add_product(request):
     user = request.user
 
-    # get all catalogs
-    catalogs = Catalog.objects.all()
+    # get all Category
+    Categories = Category.objects.all()
 
     # request.POST.getlist('services')
     # check services is in request or not
@@ -66,12 +66,12 @@ def add_product(request):
         else:
             product = None
 
-        catalogs = data.getlist('catalogs')
-        # add product to all catalogs
-        for catalog in catalogs:
-            product_in_catalog, created = ProductInCatalog.objects.get_or_create(
+        categories = data.getlist('categories')
+        # add product to all Categories
+        for category in Categories:
+            product_in_category, created = ProductInCategory.objects.get_or_create(
                 product=product,
-                catalog_id=catalog
+                category_id=category
             )
 
         for image in images:
@@ -83,7 +83,7 @@ def add_product(request):
 
         return redirect('add_product')
 
-    context = {"catalogs":catalogs}
+    context = {"categories":categories}
     return render(request, 'product/add_product.html', context)
 
 @login_required(login_url='login')
@@ -97,8 +97,8 @@ def edit_product(request,product_id):
         messages.warning(request, "You have no permission!")
         return render(request, 'product/edit_product.html')
 
-    # get all catalogs
-    catalogs = Catalog.objects.all()
+    # get all Categories
+    categories = Category.objects.all()
     try:
         product = Product.objects.get(id=product_id)
     except Product.DoesNotExist:
@@ -107,15 +107,15 @@ def edit_product(request,product_id):
 
     if request.method == 'GET':
         photos = Photo.objects.all().filter(product=product)
-        product_in_catalog = ProductInCatalog.objects.all().filter(product=product)
-        catalogs_of_product = [product_in_catalog.catalog for product_in_catalog in product_in_catalog]
+        products_in_category = ProductInCategory.objects.all().filter(product=product)
+        categories_of_product = [product_in_category.category for product_in_category in products_in_category]
         # get all images for product
 
         context = {
-            'catalogs':catalogs,
+            'categories_of_product':categories_of_product,
             'product':product,
             'photos':photos,
-            'catalogs_of_product':catalogs_of_product,
+            'categories_of_product':categories_of_product,
         }
 
         return render(request, 'product/edit_product.html', context)
@@ -131,21 +131,21 @@ def edit_product(request,product_id):
             product.name = name
             product.save()
 
-        catalogs = data.getlist('catalogs')
+        categories = data.getlist('categories')
 
-        old_catalogs = ProductInCatalog.objects.all().filter(product=product)
-        # get catalog that catalog_id not in catalogs then delete
-        for old_catalog in old_catalogs:
-            if old_catalog.catalog.id not in catalogs:
-                old_catalog.delete()
+        old_categories = ProductInCategory.objects.all().filter(product=product)
+        # get category that category_id not in categories then delete
+        for old_category in old_categories:
+            if old_category.category.id not in categories:
+                old_category.delete()
             else:
-                catalogs.remove(old_catalog.catalog.id)
+                categories.remove(old_category.category.id)
 
-        # add product to new catalogs
-        for catalog in catalogs:
-            product_in_catalog, created = ProductInCatalog.objects.get_or_create(
+        # add product to new categories
+        for category in categories:
+            product_in_category, created = ProductInCategory.objects.get_or_create(
                 product=product,
-                catalog_id=catalog
+                category_id=category
             )
 
         for image in images:

@@ -8,7 +8,7 @@ from hitcount.models import HitCount
 from hitcount.models import HitCountMixin
 
 from user.models import NomalUser
-from catalog.models import Catalog
+from category.models import Category
 
 from sorl.thumbnail import get_thumbnail
 
@@ -57,20 +57,20 @@ class Product(models.Model,HitCountMixin):
             print("Log photo:",e)
             return ''
 
-class ProductInCatalog(models.Model):
-    """Iteam exist in catalog"""
+class ProductInCategory(models.Model):
+    """Iteam exist in Category"""
 
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    catalog = models.ForeignKey(Catalog, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('product', 'catalog',)
+        unique_together = ('product', 'category',)
 
     def __str__(self):
-        return str(self.catalog) + " - " +str(self.product)
+        return str(self.category) + " - " +str(self.product)
 
     def __unicode__(self):
-        return str(self.catalog) + " - " +str(self.product)
+        return str(self.category) + " - " +str(self.product)
 
     @property
     def thumbnail_url(self):

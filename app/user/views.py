@@ -114,7 +114,7 @@ class MyApiRegister(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 """USER VIEW BUT NEED CATALOG AND PRODUCT"""
-from catalog.models import Catalog
+from category.models import Category
 from product.models import Product
 
 # Create your views here.
@@ -122,11 +122,11 @@ from product.models import Product
 def user_manage_view(request):
     user = request.user
     # get all catalogs create by user
-    catalogs = Catalog.objects.all().filter(user=user)
+    categories = Category.objects.all().filter(user=user)
     # get all prodcut created by user
     products = Product.objects.all().filter(user=user)
     photos = [product.thumb for product in products]
     # zip 
     product_with_thumb = zip(products, photos)
-    context = {'catalogs':catalogs, 'product_with_thumb':product_with_thumb}
+    context = {'categories':categories, 'product_with_thumb':product_with_thumb}
     return render(request, 'user/user_manage_view.html', context)

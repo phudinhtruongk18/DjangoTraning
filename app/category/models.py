@@ -22,7 +22,7 @@ class MyNode(models.Model):
     # node logic
 
 
-class Catalog(MyNode, HitCountMixin):
+class Category(MyNode, HitCountMixin):
     """A simple node Category"""
     user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,null=True)
     name = models.CharField(max_length=100,unique = True)
@@ -35,16 +35,17 @@ class Catalog(MyNode, HitCountMixin):
     def save(self, *args, **kwargs):
         if self.name:
             self.slug = slugify(self.name)
-        super(Catalog, self).save(*args, **kwargs)
+        super(Category, self).save(*args, **kwargs)
 
-    class MPTTMeta:
-        order_insertion_by = ['name']
+    class Meta:
+        verbose_name_plural = 'Categories'
+        ordering = ['name']
 
     def __str__(self):
         return self.name
 
     def get_url(self):
-        return reverse('products_by_catalog', args=[self.slug])
+        return reverse('products_by_category', args=[self.slug])
 
     @property
     def thumbnail_url(self):

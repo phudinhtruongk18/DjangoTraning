@@ -72,7 +72,7 @@ INSTALLED_APPS = [
     # -----------CORE-------------------
     'user',
 
-    'catalog', 
+    'category', 
     'product',
     'comment',
     'mail',

@@ -2,14 +2,14 @@
 {% load static %}
 
 {% block title %}
-Add catalog | Aram Catalog
+Add Category | Aram Catalog
 {% endblock %}
 
 {% block content %}
 <section class="section-content padding-y bg">
     <div class="container">
         <div class="container">
-            <h2 class="title-page">Add catalog</h2>
+            <h2 class="title-page">Add category</h2>
         </div>
 
         </header>
@@ -25,18 +25,18 @@ Add catalog | Aram Catalog
                         {% csrf_token %}
 
                         <div class="form-group m-3">
-                            <label>Select parent catalog</label>
-                            <select name="parent_catalog" class="form-control">
-                                <option value='none'>Select parent catalog...</option>
-                                {% for catalog in catalogs %}
-                                <option value='{{catalog.id}}'>{{catalog.name}}</option>
+                            <label>Select parent category</label>
+                            <select name="parent_category" class="form-control">
+                                <option value='none'>Select parent category...</option>
+                                {% for category in categoris %}
+                                <option value='{{category.id}}'>{{category.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
                         
                         <div class="form-group m-3">
-                            <label>Catalog Name</label>
-                            <input required name="catalog_new" type="text" placeholder="Enter a Catalog Name"
+                            <label>Category Name</label>
+                            <input required name="category_new" type="text" placeholder="Enter a Category Name"
                                 class="form-control">
                         </div>
                         

@@ -18,25 +18,27 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 
+from category.views import CategoryListView,CategoryDetailView
+
 urlpatterns = [
+    path('', CategoryListView.as_view(), name='category'),
+
+    path('category/<slug:slug>',CategoryDetailView.as_view(), name='products_by_category'),
+
     path('admin/', admin.site.urls),
-    path('', include("controller.urls")),
-    path('', include("user.urls")),
-
+    path('user/', include("user.urls")),
     # CATALOG AND PRODUCT HANDLE
-
     # healcheck
-    path('healcheck/', include("healchecker.urls")),
+    # path('healcheck/', include("healchecker.urls")),
 
     # OAuth
-    path('', include('social_django.urls', namespace='social')),
+    # path('', include('social_django.urls', namespace='social')),
     # auth wit api
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
 
-    path('', include("product.urls")),
-    path('', include("catalog.urls")),
-    path('', include("comment.urls")),
-    path('', include("photo.urls")),
+    # path('', include("product.urls")),
+    path('category/', include("category.urls")),
+    # path('', include("comment.urls")),
 
 ]
 

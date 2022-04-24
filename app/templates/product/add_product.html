@@ -32,12 +32,12 @@ Add product | Aram Catalog
                         </div>
                         
                         <div class="form-group m-3">
-                            <label>Select a catalog</label>
-                            <select multiple="multiple" name="catalogs" class="form-control">
-                                <option value='none'>Select a catalog...</option>
+                            <label>Select categories</label>
+                            <select multiple="multiple" name="categories" class="form-control">
+                                <option value='none'>Select categories...</option>
 
-                                {% for catalog in catalogs %}
-                                <option value='{{catalog.id}}'>{{catalog.name}}</option>
+                                {% for category in categories %}
+                                <option value='{{category.id}}'>{{category.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>

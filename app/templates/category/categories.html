@@ -6,7 +6,7 @@
 <!-- ========================= SECTION PAGETOP ========================= -->
 <section class="section-pagetop bg">
 	<div class="container">
-		<h2 class="title-page">Catalogs Room</h2>
+		<h2 class="title-page">Categories Room</h2>
 	</div>
 	<!-- container //  -->
 </section>
@@ -21,15 +21,15 @@
 						<header class="card-header">
 							<a href="#" data-toggle="collapse" data-target="#collapse_1" aria-expanded="true" class="">
 								<i class="icon-control fa fa-chevron-down"></i>
-								<h6 class="title">All available Catalogs</h6>
+								<h6 class="title">All available Categories</h6>
 							</a>
 						</header>
 						<div class="filter-content collapse show" id="collapse_1">
 							<div class="card-body">
 								<ul class="list-menu">
-									{% for catalog in all_catalog %}
+									{% for category in all_categories %}
 									<li>
-										<a href="{{ catalog.get_url }}">{{ catalog.name }}</a>
+										<a href="{{ category.get_url }}">{{ category.name }}</a>
 									</li>
 									{% endfor %}
 								</ul>
@@ -46,48 +46,48 @@
 			<main class="col-md-9">
 				<header class="border-bottom mb-4 pb-3">
 					<div class="form-inline">
-						<span class="mr-md-auto"><b>{{ catalogs_count }}</b> Catalogs found</span>
+						<span class="mr-md-auto"><b>{{ categories_count }}</b> Categories found</span>
 					</div>
 				</header>
 				<!-- sect-heading -->
 
 				<div class="row">
-					{% for catalog in paged_catalog %}
+					{% for catagory in paged_categories %}
 					<div class="col-md-4">
 						<figure class="card card-product-grid">
 							<div class="img-wrap">
-								{% if  catalog.image != '' %}
+								{% if  category.image != '' %}
                                 {% comment %} REPLACE LATER SOME IMAGE {% endcomment %}
-									<img src="{{ catalog.image.url }}"/>
+									<img src="{{ category.image.url }}"/>
 								{% else %}
 									<img src="{% static 'images/no-image.jpg' %}"/>
 								{% endif %}
 							</div>
 							<figcaption class="info-wrap">
 								<div class="fix-height">
-									<a href="{{ catalog.get_url }}" class="title">{{ catalog.name }}</a>
+									<a href="{{ category.get_url }}" class="title">{{ category.name }}</a>
 									<div class="price-wrap mt-2">
                                         {% comment %} REPLACE LATER {% endcomment %}
-										<span class="price">Views: {% get_hit_count for catalog %}</span>
+										<span class="price">Views: {% get_hit_count for category %}</span>
 
 									</div>
 								</div>
-								<a href="{{ catalog.get_url }}" class="btn btn-block btn-primary">View detail</a>
+								<a href="{{ category.get_url }}" class="btn btn-block btn-primary">View detail</a>
 							</figcaption>
 						</figure>
 					</div>
 					{% endfor %}
 				</div>
-				{% if paged_catalog %}
+				{% if paged_categories %}
 				<nav class="mt-4" aria-label="Page navigation sample">
 					<ul class="pagination">
-						{% if paged_catalog.has_previous %}
+						{% if paged_categories.has_previous %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'catalog' %}?page=1">First</a>
+							<a class="page-link" href="{% url 'category' %}?page=1">First</a>
 						</li>
 						<li class="page-item">
 							<a class="page-link"
-								href="{% url 'catalog' %}?page={{paged_catalog.previous_page_number}}">Previous</a>
+								href="{% url 'category' %}?page={{paged_categories.previous_page_number}}">Previous</a>
 						</li>
 						{% else %}
 						<li class="page-item disabled">
@@ -97,36 +97,36 @@
 							<a class="page-link" href="#">Previous</a>
 						</li>
 						{% endif %}
-						{% if paged_catalog.number|add:'-2' >= 1 %}
+						{% if paged_categories.number|add:'-2' >= 1 %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'catalog' %}?page={{ paged_catalog.number|add:'-2' }}">&hellip;</a>
+							<a class="page-link" href="{% url 'category' %}?page={{ paged_categories.number|add:'-2' }}">&hellip;</a>
 						</li>
 						{% endif %}
-                            {% for page in paged_catalog.paginator.page_range %}
-                                {% if paged_catalog.number|add:'-1' <= page and page <= paged_catalog.number|add:'1' %}
-                                    {% if page == paged_catalog.number %}
+                            {% for page in paged_categories.paginator.page_range %}
+                                {% if paged_categories.number|add:'-1' <= page and page <= paged_categories.number|add:'1' %}
+                                    {% if page == paged_categories.number %}
                                         <li class="page-item active">
-                                            <a class="page-link" href="{% url 'catalog' %}?page={{ page }}">{{ page }}</a>
+                                            <a class="page-link" href="{% url 'category' %}?page={{ page }}">{{ page }}</a>
                                         </li>
                                     {% else %}
                                         <li class="page-item">
-                                            <a class="page-link" href="{% url 'catalog' %}?page={{ page }}">{{ page }}</a>
+                                            <a class="page-link" href="{% url 'category' %}?page={{ page }}">{{ page }}</a>
                                         </li>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
-						{% if paged_catalog.number|add:'2' <= paged_catalog.paginator.num_pages %}
+						{% if paged_categories.number|add:'2' <= paged_categories.paginator.num_pages %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'catalog' %}?page={{ paged_catalog.number|add:'2' }}">&hellip;</a>
+							<a class="page-link" href="{% url 'category' %}?page={{ paged_categories.number|add:'2' }}">&hellip;</a>
 						</li>
 						{% endif %}
-						{% if paged_catalog.has_next %}
+						{% if paged_categories.has_next %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'catalog' %}?page={{paged_catalog.next_page_number}}">Next</a>
+							<a class="page-link" href="{% url 'category' %}?page={{paged_categories.next_page_number}}">Next</a>
 						</li>
 						<li class="page-item">
 							<a class="page-link"
-								href="{% url 'catalog' %}?page={{ paged_catalog.paginator.num_pages }}">Last</a>
+								href="{% url 'category' %}?page={{ paged_categories.paginator.num_pages }}">Last</a>
 						</li>
 						{% else %}
 						<li class="page-item disabled">

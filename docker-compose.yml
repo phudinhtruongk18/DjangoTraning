@@ -45,7 +45,7 @@ services:
              python manage.py makemigrations &&
 
              python manage.py makemigrations user &&
-             python manage.py makemigrations catalog &&
+             python manage.py makemigrations category &&
              python manage.py makemigrations product &&
              python manage.py makemigrations comment &&
              python manage.py makemigrations healchecker &&

@@ -11,11 +11,11 @@ Manage | Aram Catalog
         {% include "includes/alerts.html" %}
 
         <div class="container">
-            {% comment %} create add button next to My catalog h2 {% endcomment %}
-                    <h2 >My catalogs</h2>
-                    <a href="" class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> Add catalog</a>
+            {% comment %} create add button next to My category h2 {% endcomment %}
+                    <h2 >My Categories</h2>
+                    <a href="" class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> Add category</a>
 
-            {% comment %} list all catalogs with edit and delete button {% endcomment %}
+            {% comment %} list all categories with edit and delete button {% endcomment %}
             <div class="row">
                 <div class="col-md-12">
                     <div class="card">
@@ -31,16 +31,16 @@ Manage | Aram Catalog
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for catalog in catalogs %}
+                                    {% for category in categories %}
                                     <tr>
-                                        <td>{{ catalog.id }}</td>
-                                        <td>{{ catalog.name }}</td>
-                                        <td>{{ catalog.parent }}</td>
+                                        <td>{{ category.id }}</td>
+                                        <td>{{ category.name }}</td>
+                                        <td>{{ category.parent }}</td>
 
                                         <td>
-                                            <a href="{{ catalog.get_url }}" class="btn btn-info">View</a>
-                                            <a href="{% url 'edit_catalog' catalog.id %}" class="btn btn-outline-secondary">Edit</a>
-                                            <a href="{% url 'delete_catalog' catalog.id %}" class="btn btn-danger">Delete</a>
+                                            <a href="{{ category.get_url }}" class="btn btn-info">View</a>
+                                            <a href="{% url 'edit_category' category.id %}" class="btn btn-outline-secondary">Edit</a>
+                                            <a href="{% url 'delete_category' category.id %}" class="btn btn-danger">Delete</a>
                                         </td>
                                         <td>Me</td>
 
@@ -61,7 +61,7 @@ Manage | Aram Catalog
         <a href="{% url 'add_product' %}" target="_blank" class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> Add product</a>
 
         <div class="row justify-content-center">
-            {% comment %} list all catalog with edit delete button {% endcomment %}
+            {% comment %} list all category with edit delete button {% endcomment %}
             
             {% for product,thumb in product_with_thumb %}
             <div class="col-lg-4">

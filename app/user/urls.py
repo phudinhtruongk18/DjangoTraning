@@ -1,7 +1,7 @@
 from django.urls import path
-from views import register,login,logout,dashboard,activate
-from views import MyApiRegister
-from views import user_manage_view
+from .views import register,login,logout,dashboard,activate
+from .views import MyApiRegister
+from .views import user_manage_view
 
 
 urlpatterns = [
