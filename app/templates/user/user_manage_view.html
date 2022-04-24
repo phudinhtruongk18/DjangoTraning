@@ -78,6 +78,10 @@ Manage | Aram Catalog
 
                     <div class="card-body">
                         <h5 class="card-title">{{ product.name }}</h5>
+                        {% comment %} display prive  {% endcomment %}
+                        <p class="card-text">
+                            <span class="badge badge-primary">{{ product.price }}</span>
+                        </p>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 <a href="{{ product.get_url }}" class="btn btn-info">View</a>

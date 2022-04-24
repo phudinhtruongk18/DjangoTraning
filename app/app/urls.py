@@ -20,11 +20,24 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('healcheck/', include("healchecker.urls")),
+    path('', include("controller.urls")),
     path('', include("user.urls")),
-    path('', include("tree.urls")),
-    # urls(r'^ht/', include('health_check.urls')),
-    path('', include('social_django.urls', namespace='social'))
+
+    # CATALOG AND PRODUCT HANDLE
+
+    # healcheck
+    path('healcheck/', include("healchecker.urls")),
+
+    # OAuth
+    path('', include('social_django.urls', namespace='social')),
+    # auth wit api
+    path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
+
+    path('', include("product.urls")),
+    path('', include("catalog.urls")),
+    path('', include("comment.urls")),
+    path('', include("photo.urls")),
+
 ]
 
 if settings.DEBUG:

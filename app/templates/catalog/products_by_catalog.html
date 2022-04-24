@@ -72,6 +72,11 @@
 							<figcaption class="info-wrap">
 								<div class="fix-height">
 									<a href="{{ product.product.get_url }}" class="title">{{ product.product.name }}</a>
+
+									<div class="price-wrap mt-2">
+										<span class="price">Price: {{ product.product.price_display }}</span>
+									</div>
+
 									<div class="price-wrap mt-2">
                                         {% comment %} REPLACE LATER {% endcomment %}
 										<span class="price">Views: {% get_hit_count for product.product %}</span>

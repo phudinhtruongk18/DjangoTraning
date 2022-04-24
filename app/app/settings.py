@@ -44,12 +44,21 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_celery_results',
-    # -----------CORE-------------------
-    'tree',
-    'user',
-    'mail',
-    # -----------HEAL-------------------
-    'healchecker',
+    # -----------Cross-origin resource sharing-------------------
+    'corsheaders',
+    # -----------rest_framework-------------------
+    'rest_framework',
+    # -----------SITE-LIBRARY-------------------
+    'django.contrib.sites',
+    # -----------THUMBNAIL-LIBRARY-------------------
+    'sorl.thumbnail',
+    # -----------OAUTH-LIBRARY-------------------
+    'social_django',
+    # -----------DRF-STUFT-LIBRARY-------------------
+    'oauth2_provider',
+    'drf_social_oauth2',
+
+    # REPLACE IN FUTURE WITH MY OWN CODE AND PATTERM
     # -----------HEAL-LIBRARY----------
     'health_check',                             # required
     'health_check.db',                          # stock Django health checkers
@@ -58,15 +67,19 @@ INSTALLED_APPS = [
     'health_check.contrib.migrations',
     'health_check.contrib.celery_ping',         # requires celery
     'health_check.contrib.redis',               # requires Redis broker
-
     # -----------COUNT-LIBRARY-------------------
     'hitcount',
-    # -----------THUMBNAIL-LIBRARY-------------------
-    'sorl.thumbnail',
-    # -----------SITE-LIBRARY-------------------
-    'django.contrib.sites',
-    # -----------OAUTH-LIBRARY-------------------
-    'social_django',
+    # -----------CORE-------------------
+    'user',
+
+    'catalog', 
+    'product',
+    'comment',
+    'mail',
+    # -----------HEAL-------------------
+    'healchecker',
+
+    # -----------API REST-------------------
 ]
 
 MIDDLEWARE = [
@@ -93,6 +106,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends',
+                'social_django.context_processors.login_redirect',
             ],
         },
     },
@@ -162,11 +177,6 @@ else:
         '/vol/web/static',
     ]
 
-# All settings common to all environments
-# PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-# STATIC_URL = '/vol/web/static/'
-# STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -199,6 +209,7 @@ SITE_ID = 1
 AUTHENTICATION_BACKENDS = (
     'social_core.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
+    'drf_social_oauth2.backends.DjangoOAuth2',
 )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '897327147963-57bk3t7jdkf3o6e25ff8j5srfqlasjjr.apps.googleusercontent.com'
@@ -208,6 +219,35 @@ AUTH_USER_MODEL = 'user.NomalUser'
 LOGIN_REDIRECT_URL = 'login'
 SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:8000']
 
-# # </========== CONGIFGURE AUTH ===========>
+# </========== CONGIFGURE AUTH ===========>
 
-# import social_django
+# </========================================================================>
+# </============================ REST GO BELOW =============================>
+# </========================================================================>
+
+
+# wonder if this need in my project (# Define SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE to get extra permissions from Google.)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
+    'https://www.googleapis.com/auth/userinfo.email',
+    'https://www.googleapis.com/auth/userinfo.profile',
+]
+
+
+REST_FRAMEWORK = {       
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+        'drf_social_oauth2.authentication.SocialAuthentication',
+    ),
+}
+
+# allow ip and domain
+if DEBUG:
+    CORS_ALLOWED_ORIGINS = [
+        # react port
+        'http://localhost:3000',
+        'http://localhost:8000',
+    ]
+else:
+    print("real domain here")
+

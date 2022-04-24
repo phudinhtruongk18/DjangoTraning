@@ -1,10 +1,18 @@
 from django.urls import path
-from . import views
+from views import register,login,logout,dashboard,activate
+from views import MyApiRegister
+from views import user_manage_view
+
 
 urlpatterns = [
-    path('register/', views.register, name='register'),
-    path('login/', views.login, name='login'),
-    path('logout/', views.logout, name='logout'),
-    path('dashboard/', views.dashboard, name='dashboard'),
-    path('activate/<uidb64>/<token>', views.activate, name='activate'),
+    path('register/', register, name='register'),
+    path('login/', login, name='login'),
+    path('logout/', logout, name='logout'),
+    path('dashboard/', dashboard, name='dashboard'),
+    path('activate/<uidb64>/<token>', activate, name='activate'),
+
+    path('api_register/', MyApiRegister.as_view(), name="api_register"),
+
+    # valid?
+    path('user_manage_view/', user_manage_view, name='user_manage_view'),
 ]

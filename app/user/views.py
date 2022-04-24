@@ -94,3 +94,39 @@ def logout(request):
 @login_required(login_url="login")
 def dashboard(request):
     return render(request, 'user/dashboard.html')
+
+from rest_framework.views import APIView
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from .serializers import MyUserSerializer
+from rest_framework import status
+
+class MyApiRegister(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request, format='json'):
+        serializer = MyUserSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            if user:
+                json = serializer.data
+                return Response(json, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+"""USER VIEW BUT NEED CATALOG AND PRODUCT"""
+from catalog.models import Catalog
+from product.models import Product
+
+# Create your views here.
+@login_required(login_url='login')
+def user_manage_view(request):
+    user = request.user
+    # get all catalogs create by user
+    catalogs = Catalog.objects.all().filter(user=user)
+    # get all prodcut created by user
+    products = Product.objects.all().filter(user=user)
+    photos = [product.thumb for product in products]
+    # zip 
+    product_with_thumb = zip(products, photos)
+    context = {'catalogs':catalogs, 'product_with_thumb':product_with_thumb}
+    return render(request, 'user/user_manage_view.html', context)
