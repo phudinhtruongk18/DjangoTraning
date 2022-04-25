@@ -117,26 +117,21 @@ class DeleteCategory(generics.RetrieveDestroyAPIView):
 
 class CategoryListView(ListView):
     model = Category
-    context_object_name = 'category'
+    # comment this line to see all categories (without pagination)
+    paginate_by = 3
+    context_object_name = 'paged_categories'
     template_name = 'category/categories.html'
 
     def get_context_data(self, **kwargs):
         context = super(CategoryListView, self).get_context_data(**kwargs)
-        
         all_categories = Category.objects.all()
-        
-        page = self.request.GET.get('page')
-        page = page or 1
-
-        panigator = Paginator(all_categories, 6)
-        paged_categories = panigator.get_page(page)
         all_categories_count = all_categories.count()
+        # print('context->',context)
 
-        context = {
-            'paged_categories': paged_categories,
+        context.update({
             'categories_count': all_categories_count,
             'all_categories': all_categories,
-        }
+        })
 
         return context
 
@@ -144,12 +139,16 @@ class CategoryDetailView(HitCountDetailView):
     model = Category
     count_hit = True    
     template = 'category/products_by_category.html'
+    
     slug_field = 'slug'
+
 
     def get_context_data(self,page, **kwargs):
         context = super(CategoryDetailView, self).get_context_data(**kwargs)
+        # check attribute of object
+        print('context->',context)
 
-        category = context['Category']
+        category = context['category']
         products = ProductInCategory.objects.all().filter(category=category)
 
         panigator = Paginator(products, 3)
@@ -170,26 +169,26 @@ class CategoryDetailView(HitCountDetailView):
         context = self.get_context_data(page=page,object=self.object)
         return render(request, 'category/products_by_category.html', context=context)
 
-def products_by_category(request, category_slug=None):
+# def products_by_category(request, category_slug=None):
 
-    if category_slug is not None:
-        category = get_object_or_404(Category, slug=category_slug)
-        products = ProductInCategory.objects.all().filter(Category=Category)
-    else:
-        products = ProductInCategory.objects.all().filter().order_by('product')
+#     if category_slug is not None:
+#         category = get_object_or_404(Category, slug=category_slug)
+#         products = ProductInCategory.objects.all().filter(category=category)
+#     else:
+#         products = ProductInCategory.objects.all().filter().order_by('product')
 
-    page = request.GET.get('page')
-    page = page or 1
-    panigator = Paginator(products, 3)
-    paged_products = panigator.get_page(page)
-    products_count = products.count()
+#     page = request.GET.get('page')
+#     page = page or 1
+#     panigator = Paginator(products, 3)
+#     paged_products = panigator.get_page(page)
+#     products_count = products.count()
 
-    context = {
-        'category': category if 'category' in locals() else None,
-        'paged_products': paged_products,
-        'products_count': products_count,
-   }
-    return render(request, 'category/products_by_category.html', context=context)
+#     context = {
+#         'category': category if 'category' in locals() else None,
+#         'paged_products': paged_products,
+#         'products_count': products_count,
+#    }
+#     return render(request, 'category/products_by_category.html', context=context)
 
 # create Category with image(optional) if user is login
 @login_required(login_url='login')
@@ -201,13 +200,15 @@ def add_category(request):
         data = request.POST
         image = request.FILES.get('image')
         name = data['category_new']
-        parent_category = data.get('parent_category')
+        parent_category_id = data.get('parent_category')
         # get parent Category
-        try:
-            parent_category = Category.objects.get(id=int(parent_category))
-        except Category.DoesNotExist:
-            messages.error(request, "Parent Category does not exist!")
-            return render(request, 'category/add_category.html', {'categories':categories})
+        parent_category = None
+        if parent_category_id != 'none':
+            try:
+                parent_category = Category.objects.get(id=int(parent_category_id))
+            except Category.DoesNotExist:
+                messages.error(request, "Parent Category does not exist!")
+                return render(request, 'category/add_category.html', {'categories':categories})
             
         user = request.user
         category = Category.objects.create(
@@ -284,6 +285,6 @@ def edit_category(request, category_id):
                 category.image = image
             category.save()
             messages.info(request, "Update Category success!")
-            return redirect('edit_category', category_id=category_id)
+            return redirect('category:edit_category', category_id=category_id)
     messages.error(request, "Update Category false!")
     return redirect(url)

@@ -18,28 +18,22 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from category.views import CategoryListView,CategoryDetailView
+from category.views import CategoryListView
 
 urlpatterns = [
-    path('', CategoryListView.as_view(), name='category'),
-
-    path('category/<slug:slug>',CategoryDetailView.as_view(), name='products_by_category'),
-
     path('admin/', admin.site.urls),
-    path('user/', include("user.urls")),
-    # CATALOG AND PRODUCT HANDLE
-    # healcheck
-    # path('healcheck/', include("healchecker.urls")),
+    path('me/', include("user.urls")),
+
+    # CATALOG AND PRODUCT URL
+    path('', CategoryListView.as_view(), name='category'),
+    path('category', include("category.urls")),
+    path('product/', include("product.urls")),
+    path('comment/', include("comment.urls")),
 
     # OAuth
     # path('', include('social_django.urls', namespace='social')),
-    # auth wit api
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
-
-    # path('', include("product.urls")),
-    path('category/', include("category.urls")),
-    # path('', include("comment.urls")),
-
+    # auth wit api
 ]
 
 if settings.DEBUG:
@@ -47,3 +41,4 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+# else (production case) will be handled by nginx

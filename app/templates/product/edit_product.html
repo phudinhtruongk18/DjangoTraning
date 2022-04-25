@@ -37,7 +37,11 @@ Edit product | Aram Catalog
                                 <option value='none'>Select categories...</option>
 
                                 {% for category in categories %}
-                                <option value='{{category.id}}'>{{category.name}}</option>
+                                <option 
+                                    {% if category in categories_of_product %}
+                                        selected
+                                    {% endif %}
+                                    value='{{category.id}}'>{{category.name}}</option>
                                 {% endfor %}
                             </select>
                         </div>

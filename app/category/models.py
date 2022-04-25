@@ -39,13 +39,13 @@ class Category(MyNode, HitCountMixin):
 
     class Meta:
         verbose_name_plural = 'Categories'
-        ordering = ['name']
+        ordering = ['date_added']
 
     def __str__(self):
         return self.name
 
     def get_url(self):
-        return reverse('products_by_category', args=[self.slug])
+        return reverse('category:products_by_category', args=[self.slug])
 
     @property
     def thumbnail_url(self):

@@ -171,12 +171,12 @@ MEDIA_URL = '/static/media/'
 MEDIA_ROOT = '/vol/web/media'
 
 if DEBUG:
-    STATIC_ROOT = '/vol/web/static'
-else:
     STATICFILES_DIRS = [
         '/vol/web/static',
     ]
-
+else:
+    STATIC_ROOT = '/vol/web/static'
+    
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
@@ -250,4 +250,15 @@ if DEBUG:
     ]
 else:
     print("real domain here")
+
+# set to vietnamese time zone
+TIME_ZONE = 'Asia/Ho_Chi_Minh'
+# timezone
+USE_TZ = True
+
+# # language
+# USE_I18N = True
+
+# # location
+# USE_L10N = True
 

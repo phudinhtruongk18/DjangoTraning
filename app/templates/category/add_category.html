@@ -28,7 +28,7 @@ Add Category | Aram Catalog
                             <label>Select parent category</label>
                             <select name="parent_category" class="form-control">
                                 <option value='none'>Select parent category...</option>
-                                {% for category in categoris %}
+                                {% for category in categories %}
                                 <option value='{{category.id}}'>{{category.name}}</option>
                                 {% endfor %}
                             </select>
@@ -42,7 +42,7 @@ Add Category | Aram Catalog
                         
                         <div class="form-group m-3">
                             <label>Upload image</label>
-                            <input required name="image" type="file">
+                            <input name="image" type="file">
                         </div>
 
                         <button type='submit' class="btn btn-primary m-3">Submit</button>

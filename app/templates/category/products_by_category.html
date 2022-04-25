@@ -94,11 +94,11 @@
 					<ul class="pagination">
 						{% if paged_products.has_previous %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'products_by_category' category.slug %}?page=1">First</a>
+							<a class="page-link" href="{% url 'category:products_by_category' category.slug %}?page=1">First</a>
 						</li>
 						<li class="page-item">
 							<a class="page-link"
-								href="{% url 'products_by_category' category.slug %}?page={{paged_products.previous_page_number}}">Previous</a>
+								href="{% url 'category:products_by_category' category.slug %}?page={{paged_products.previous_page_number}}">Previous</a>
 						</li>
 						{% else %}
 						<li class="page-item disabled">
@@ -110,34 +110,34 @@
 						{% endif %}
 						{% if paged_products.number|add:'-2' >= 1 %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'products_by_category' category.slug %}?page={{ paged_products.number|add:'-2' }}">&hellip;</a>
+							<a class="page-link" href="{% url 'category:products_by_category' category.slug %}?page={{ paged_products.number|add:'-2' }}">&hellip;</a>
 						</li>
 						{% endif %}
                             {% for page in paged_products.paginator.page_range %}
                                 {% if paged_products.number|add:'-1' <= page and page <= paged_products.number|add:'1' %}
                                     {% if page == paged_products.number %}
                                         <li class="page-item active">
-                                            <a class="page-link" href="{% url 'products_by_category' category.slug %}?page={{ page }}">{{ page }}</a>
+                                            <a class="page-link" href="{% url 'category:products_by_category' category.slug %}?page={{ page }}">{{ page }}</a>
                                         </li>
                                     {% else %}
                                         <li class="page-item">
-                                            <a class="page-link" href="{% url 'products_by_category' category.slug %}?page={{ page }}">{{ page }}</a>
+                                            <a class="page-link" href="{% url 'category:products_by_category' category.slug %}?page={{ page }}">{{ page }}</a>
                                         </li>
                                     {% endif %}
                                 {% endif %}
                             {% endfor %}
 						{% if paged_products.number|add:'2' <= paged_products.paginator.num_pages %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'products_by_category' category.slug %}?page={{ paged_products.number|add:'2' }}">&hellip;</a>
+							<a class="page-link" href="{% url 'category:products_by_category' category.slug %}?page={{ paged_products.number|add:'2' }}">&hellip;</a>
 						</li>
 						{% endif %}
 						{% if paged_products.has_next %}
 						<li class="page-item">
-							<a class="page-link" href="{% url 'products_by_category' category.slug %}?page={{paged_products.next_page_number}}">Next</a>
+							<a class="page-link" href="{% url 'category:products_by_category' category.slug %}?page={{paged_products.next_page_number}}">Next</a>
 						</li>
 						<li class="page-item">
 							<a class="page-link"
-								href="{% url 'products_by_category' category.slug %}?page={{ paged_products.paginator.num_pages }}">Last</a>
+								href="{% url 'category:products_by_category' category.slug %}?page={{ paged_products.paginator.num_pages }}">Last</a>
 						</li>
 						{% else %}
 						<li class="page-item disabled">

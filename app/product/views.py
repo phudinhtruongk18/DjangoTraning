@@ -43,7 +43,7 @@ def add_product(request):
     user = request.user
 
     # get all Category
-    Categories = Category.objects.all()
+    categories = Category.objects.all()
 
     # request.POST.getlist('services')
     # check services is in request or not
@@ -56,7 +56,7 @@ def add_product(request):
 
         if data['product_new'] != '':
             try:
-                product, created = Product.objects.get_or_create(
+                product, _ = Product.objects.get_or_create(
                     user=user,
                     name=data['product_new']
                 )
@@ -68,8 +68,8 @@ def add_product(request):
 
         categories = data.getlist('categories')
         # add product to all Categories
-        for category in Categories:
-            product_in_category, created = ProductInCategory.objects.get_or_create(
+        for category in categories:
+           ProductInCategory.objects.get_or_create(
                 product=product,
                 category_id=category
             )
@@ -112,7 +112,7 @@ def edit_product(request,product_id):
         # get all images for product
 
         context = {
-            'categories_of_product':categories_of_product,
+            'categories':categories,
             'product':product,
             'photos':photos,
             'categories_of_product':categories_of_product,
@@ -127,7 +127,6 @@ def edit_product(request,product_id):
         # print data['product_new']
         if data['product_new'] != '':
             name=data['product_new']
-            print("name: ", name)
             product.name = name
             product.save()
 

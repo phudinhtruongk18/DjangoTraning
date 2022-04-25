@@ -13,7 +13,7 @@ Manage | Aram Catalog
         <div class="container">
             {% comment %} create add button next to My category h2 {% endcomment %}
                     <h2 >My Categories</h2>
-                    <a href="" class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> Add category</a>
+                    <a href="{% url 'category:add_category' %}" class="btn btn-outline-primary"><i class="fa fa-plus-circle"></i> Add category</a>
 
             {% comment %} list all categories with edit and delete button {% endcomment %}
             <div class="row">
@@ -39,8 +39,8 @@ Manage | Aram Catalog
 
                                         <td>
                                             <a href="{{ category.get_url }}" class="btn btn-info">View</a>
-                                            <a href="{% url 'edit_category' category.id %}" class="btn btn-outline-secondary">Edit</a>
-                                            <a href="{% url 'delete_category' category.id %}" class="btn btn-danger">Delete</a>
+                                            <a href="{% url 'category:edit_category' category.id %}" class="btn btn-outline-secondary">Edit</a>
+                                            <a href="{% url 'category:delete_category' category.id %}" class="btn btn-danger">Delete</a>
                                         </td>
                                         <td>Me</td>
 
@@ -88,7 +88,7 @@ Manage | Aram Catalog
                                 <a href="{% url 'edit_product' product.id %}" class="btn btn-outline-secondary">Edit</a>
                                 <a href="{% url 'delete_product' product.id %}" class="btn btn-danger">Delete</a>
                             </div>
-                            <small class="text-muted">by me</small>
+                            <small class="text-muted">{{ product.date_added }}</small>
                         </div>
                     </div>
 

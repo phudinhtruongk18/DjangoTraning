@@ -1,7 +1,0 @@
-time zone
-retry task
-too long (time_out)
-
-re src naming
-atomic quẻy
-chery task
