@@ -5,10 +5,6 @@ from mail.worker import mailing_healchecl
 
 class HealChecker(CheckMixin):
 
-    def get_json(self):
-        rep = self.run_check()
-        print(rep)
-
     def render_to_response_json(self):
         return {str(p.identifier()): str(p.pretty_status()) for p in self.plugins}
             
@@ -22,3 +18,4 @@ def heal_check_pro() -> NoReturn:
     else:
         print("working fine. Error:", result.errors)
     # return here
+    

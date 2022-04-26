@@ -9,6 +9,7 @@ from django.contrib import messages
 from category.models import Category
 from .models import ProductInCategory
 
+from django.db import IntegrityError
 
 # <---------------------- PRODUCT VIEW ---------------------->
 class ProductDetailView(HitCountDetailView):
@@ -99,11 +100,6 @@ def edit_product(request,product_id):
 
     # get all Categories
     categories = Category.objects.all()
-    try:
-        product = Product.objects.get(id=product_id)
-    except Product.DoesNotExist:
-        messages.warning(request, "Product does not exist!")
-        return render(request, 'product/edit_product.html')
 
     if request.method == 'GET':
         photos = Photo.objects.all().filter(product=product)
@@ -128,22 +124,25 @@ def edit_product(request,product_id):
         if data['product_new'] != '':
             name=data['product_new']
             product.name = name
-            product.save()
+            try:
+                product.save()
+            except IntegrityError as e:
+                messages.warning(request, "Product name is exist!")
+                return redirect('edit_product', product_id)
 
-        categories = data.getlist('categories')
-
+        categories_id = data.getlist('categories')
         old_categories = ProductInCategory.objects.all().filter(product=product)
         # get category that category_id not in categories then delete
         for old_category in old_categories:
-            if old_category.category.id not in categories:
+            if old_category.category.id not in categories_id:
                 old_category.delete()
             else:
                 categories.remove(old_category.category.id)
 
         # add product to new categories
-        for category in categories:
+        for category in categories_id:
             product_in_category, created = ProductInCategory.objects.get_or_create(
-                product=product,
+                product_id=product.id,
                 category_id=category
             )
 
@@ -185,10 +184,9 @@ def delete_photo(request, photo_id):
     url = request.META.get('HTTP_REFERER')
     # check login and check user
     try:
-        photo_id = int(photo_id)
-        photo = Photo.objects.get(id = photo_id)
+        photo = Photo.objects.get(id = int(photo_id))
     except Photo.DoesNotExist:
-        messages.error(request, "Photo does not exist!")
+        messages.warning(request, "Photo does not exist!")
         return redirect(url)
 
     if photo.product.user.id == request.user.id:
@@ -196,6 +194,6 @@ def delete_photo(request, photo_id):
         messages.success(request, "Your photo has been deleted!")
         return redirect(url)
     
-    messages.error(request, "Delete photo false!")
+    messages.warning(request, "Delete photo false!")
     return redirect(url)
 # <---------------------- /PHOTO VIEW ---------------------->

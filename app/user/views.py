@@ -48,16 +48,7 @@ def login(request):
         if user is not None:
             auth.login(request=request, user=user)
             messages.success(request, "Login successful")
-
-            url = request.META.get('HTTP_REFERER')
-            try:
-                query = request.utils.urlparse(url).query
-                params = dict(x.split("x") for x in query.split("&"))
-                if 'next' in params:
-                    next_page = params['next']
-                    return redirect(next_page)
-            except Exception:
-                return redirect('dashboard')
+            return redirect('dashboard')
         else:
             messages.error(request, "Login failed!")
             messages.error(request, "Make sure that your Aram Account is activated !")

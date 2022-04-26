@@ -90,3 +90,7 @@ echo "from django.contrib.auth import get_user_model; User = get_user_model(); U
     # # expires in 6 months
     # oauth2_settings.DEFAULTS['ACCESS_TOKEN_EXPIRE_SECONDS'] = 1.577e7
 
+if your signals is not connected around apps, you can place it on your models.py. 
+But if you are using it to connect different apps, or a common signal to multiple apps, 
+you can should have a separated file to place.
+

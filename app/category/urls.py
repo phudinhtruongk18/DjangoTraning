@@ -12,7 +12,7 @@ urlpatterns = [
     path('', CategoryListView.as_view(), name='category'),
 
     # path('<slug:category_slug>/',products_by_category, name='products_by_category'),
-    path('<slug:slug>/',CategoryDetailView.as_view(), name='products_by_category'),
+    path('products/<slug:slug>/',CategoryDetailView.as_view(), name='products_by_category'),
 
     path('add/', add_category, name='add_category'),
     path('edit/<int:category_id>/', edit_category, name='edit_category'),

@@ -24,6 +24,9 @@ Edit category | Aram Catalog
                     <form method='POST' action="" enctype="multipart/form-data">
                         {% csrf_token %}
 
+                        {% comment %} form qua xau {% endcomment %}
+                        {% comment %} {{ form.parent }} {% endcomment %}
+                        
                         <div class="form-group m-3">
                             <label>Select parent category</label>
                             <select name="parent_category" class="form-control">

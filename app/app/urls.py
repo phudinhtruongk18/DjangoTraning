@@ -26,7 +26,7 @@ urlpatterns = [
 
     # CATALOG AND PRODUCT URL
     path('', CategoryListView.as_view(), name='category'),
-    path('category', include("category.urls")),
+    path('category/', include("category.urls")),
     path('product/', include("product.urls")),
     path('comment/', include("comment.urls")),
 

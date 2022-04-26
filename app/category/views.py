@@ -30,8 +30,6 @@ from django.contrib import messages
 from product.models import ProductInCategory
 
 from django.shortcuts import get_object_or_404
-from .models import Category
-from .serializers import CategorySerializer
 from rest_framework import viewsets, filters, generics, permissions
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -39,6 +37,13 @@ from rest_framework import status
 from rest_framework.parsers import MultiPartParser, FormParser
 # Display Posts
 from rest_framework.decorators import api_view
+
+from django.db import IntegrityError
+
+from .models import Category
+# from .forms import CategoryForm
+from .serializers import CategorySerializer
+from .my_exception import MyValidationError
 
 @api_view(['GET'])
 def category_list(request):
@@ -142,7 +147,6 @@ class CategoryDetailView(HitCountDetailView):
     
     slug_field = 'slug'
 
-
     def get_context_data(self,page, **kwargs):
         context = super(CategoryDetailView, self).get_context_data(**kwargs)
         # check attribute of object
@@ -207,17 +211,22 @@ def add_category(request):
             try:
                 parent_category = Category.objects.get(id=int(parent_category_id))
             except Category.DoesNotExist:
-                messages.error(request, "Parent Category does not exist!")
+                messages.warning(request, "Parent Category does not exist!")
                 return render(request, 'category/add_category.html', {'categories':categories})
             
-        user = request.user
         category = Category.objects.create(
             parent=parent_category,
             name=name,
-            user=user,
+            user=request.user,
             image = image
         )
-        category.save()
+
+        try:
+            category.save()
+        except IntegrityError:
+            messages.warning(request, "This category is already exist! Pick another name!")
+            return render(request, 'category/add_category.html', {'categories':categories})
+
         messages.info(request, "Create Category success!")
         return redirect('add_category')
     
@@ -235,7 +244,7 @@ def delete_category(request, category_id):
         category_id = int(category_id)
         category = Category.objects.get(id = category_id)
     except Category.DoesNotExist:
-        messages.error(request, "Category does not exist!")
+        messages.warning(request, "Category does not exist!")
         return redirect(url)
 
     if category.user.id == request.user.id:
@@ -243,7 +252,7 @@ def delete_category(request, category_id):
         messages.success(request, "Your category has been deleted!")
         return redirect(url)
     
-    messages.error(request, "Delete category false!")
+    messages.warning(request, "Delete category false!")
     return redirect(url)
 
 # edit Category if user is login
@@ -251,11 +260,12 @@ def delete_category(request, category_id):
 def edit_category(request, category_id):
     url = request.META.get('HTTP_REFERER')
     # check login and check user
+    # form = CategoryForm()
     try:
         category_id = int(category_id)
         category = Category.objects.get(id = category_id)
     except Category.DoesNotExist:
-        messages.error(request, "Category does not exist!")
+        messages.warning(request, "Category does not exist!")
         return redirect(url)
 
     categories = Category.objects.all()
@@ -265,6 +275,7 @@ def edit_category(request, category_id):
             context = {
                 'category':category,
                 'categories':categories,
+                # 'form':form,
             }
             return render(request, 'category/edit_category.html', context)
         elif request.method == 'POST':
@@ -276,15 +287,23 @@ def edit_category(request, category_id):
             try:
                 parent_category = Category.objects.get(id=int(parent_category))
             except Category.DoesNotExist:
-                messages.error(request, "Parent Category does not exist!")
-                return render(request, 'category/edit_category.html', {'Category':category})
+                messages.warning(request, "Parent Category does not exist!")
+                return render(request, 'category/edit_category.html', {'category':category})
             
             category.name = name
             category.parent = parent_category
             if image:
                 category.image = image
-            category.save()
+
+            try:
+                category.save()
+            except IntegrityError:
+                messages.warning(request, "Pick another name!")
+            except MyValidationError as e:
+                messages.warning(request, str(e))
+                return redirect(url)
+
             messages.info(request, "Update Category success!")
             return redirect('category:edit_category', category_id=category_id)
-    messages.error(request, "Update Category false!")
+    messages.warning(request, "Update Category false!")
     return redirect(url)

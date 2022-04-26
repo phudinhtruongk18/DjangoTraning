@@ -1,4 +1,4 @@
-from django.db import models
+from django.db import IntegrityError, models
 from django.urls import reverse
 from django.template.defaultfilters import slugify
 from django.contrib.contenttypes.fields import GenericRelation
@@ -8,26 +8,23 @@ from hitcount.models import HitCount
 from sorl.thumbnail import get_thumbnail
 
 from user.models import NomalUser
+from .my_exception import MyValidationError
 
 
-# class MyNode(MPTTModel):
 class MyNode(models.Model):
-    """My own tree model """
-    # parent = TreeForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
+    """My own abstract node model to implement tree structure"""
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
 
     class Meta:
         abstract = True
 
-    # node logic
-
 
 class Category(MyNode, HitCountMixin):
-    """A simple node Category"""
+    """A node Category"""
     user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,null=True)
-    name = models.CharField(max_length=100,unique = True)
+    name = models.CharField(max_length=200,unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
-    slug = models.SlugField(max_length=200,unique=True, blank=True, editable=False)
+    slug = models.SlugField(max_length=200,unique=True, editable=False)
     image = models.ImageField(null=True, blank=True)
     hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
         related_query_name='hit_count_generic_relation')
@@ -35,6 +32,9 @@ class Category(MyNode, HitCountMixin):
     def save(self, *args, **kwargs):
         if self.name:
             self.slug = slugify(self.name)
+        if self.parent.slug == self.slug:
+            raise MyValidationError('Parent slug and child slug must be different')
+
         super(Category, self).save(*args, **kwargs)
 
     class Meta:
