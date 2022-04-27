@@ -1,3 +1,4 @@
+from django.forms import ValidationError
 from django.shortcuts import render
 from .models import Product,Photo
 from comment.models import Comment
@@ -56,10 +57,12 @@ def add_product(request):
         images = request.FILES.getlist('images')
 
         if data['product_new'] != '':
+            price=data['price']
             try:
                 product, _ = Product.objects.get_or_create(
                     user=user,
-                    name=data['product_new']
+                    name=data['product_new'],
+                    price=price,
                 )
             except IntegrityError as e:
                 messages.warning(request, "Product name is exist!")
@@ -123,9 +126,14 @@ def edit_product(request,product_id):
         # print data['product_new']
         if data['product_new'] != '':
             name=data['product_new']
+            price=data['price']
             product.name = name
+            product.price = price
             try:
                 product.save()
+            except ValidationError as f:
+                messages.warning(request, f)
+                return redirect('edit_product', product_id)
             except IntegrityError as e:
                 messages.warning(request, "Product name is exist!")
                 return redirect('edit_product', product_id)

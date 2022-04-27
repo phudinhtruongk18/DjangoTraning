@@ -150,7 +150,7 @@ class CategoryDetailView(HitCountDetailView):
     def get_context_data(self,page, **kwargs):
         context = super(CategoryDetailView, self).get_context_data(**kwargs)
         # check attribute of object
-        print('context->',context)
+        # print('context->',context)
 
         category = context['category']
         products = ProductInCategory.objects.all().filter(category=category)
@@ -214,21 +214,20 @@ def add_category(request):
                 messages.warning(request, "Parent Category does not exist!")
                 return render(request, 'category/add_category.html', {'categories':categories})
             
-        category = Category.objects.create(
+        try:
+            category = Category.objects.create(
             parent=parent_category,
             name=name,
             user=request.user,
             image = image
-        )
-
-        try:
+            )
             category.save()
         except IntegrityError:
             messages.warning(request, "This category is already exist! Pick another name!")
             return render(request, 'category/add_category.html', {'categories':categories})
 
         messages.info(request, "Create Category success!")
-        return redirect('add_category')
+        return redirect('category:add_category')
     
     context = {
         'categories':categories,
@@ -258,7 +257,6 @@ def delete_category(request, category_id):
 # edit Category if user is login
 @login_required(login_url='login')
 def edit_category(request, category_id):
-    url = request.META.get('HTTP_REFERER')
     # check login and check user
     # form = CategoryForm()
     try:
@@ -266,7 +264,7 @@ def edit_category(request, category_id):
         category = Category.objects.get(id = category_id)
     except Category.DoesNotExist:
         messages.warning(request, "Category does not exist!")
-        return redirect(url)
+        return redirect('category:edit_category')
 
     categories = Category.objects.all()
 
@@ -299,11 +297,14 @@ def edit_category(request, category_id):
                 category.save()
             except IntegrityError:
                 messages.warning(request, "Pick another name!")
+                return redirect('category:edit_category')
             except MyValidationError as e:
                 messages.warning(request, str(e))
-                return redirect(url)
+                return redirect('category:edit_category')
+
 
             messages.info(request, "Update Category success!")
             return redirect('category:edit_category', category_id=category_id)
     messages.warning(request, "Update Category false!")
-    return redirect(url)
+    return redirect('category:edit_category')
+

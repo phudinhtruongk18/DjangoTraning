@@ -69,9 +69,6 @@ class ProductInCategory(models.Model):
     def __str__(self):
         return str(self.category) + " - " +str(self.product)
 
-    def __unicode__(self):
-        return str(self.category) + " - " +str(self.product)
-
     @property
     def thumbnail_url(self):
         # get first url photo or none

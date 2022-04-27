@@ -32,8 +32,9 @@ class Category(MyNode, HitCountMixin):
     def save(self, *args, **kwargs):
         if self.name:
             self.slug = slugify(self.name)
-        if self.parent.slug == self.slug:
-            raise MyValidationError('Parent slug and child slug must be different')
+        if self.parent:
+            if self.parent.slug == self.slug:
+                raise MyValidationError('Parent slug and child slug must be different')
 
         super(Category, self).save(*args, **kwargs)
 
