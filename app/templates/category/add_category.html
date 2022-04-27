@@ -24,25 +24,29 @@ Add Category | Aram Catalog
                     <form method='POST' action="" enctype="multipart/form-data">
                         {% csrf_token %}
 
+                        {% if form.errors %}
+                            {% for field in form %}
+                                {% for error in field.errors %} 
+                                <div class="alert alert-danger">
+                                        <strong>{{ error|escape }}</strong>
+                                </div>
+                                {% endfor %}
+                            {% endfor %}
+                        {% endif %}
+                        
                         <div class="form-group m-3">
                             <label>Select parent category</label>
-                            <select name="parent_category" class="form-control">
-                                <option value='none'>Select parent category...</option>
-                                {% for category in categories %}
-                                <option value='{{category.id}}'>{{category.name}}</option>
-                                {% endfor %}
-                            </select>
+                            {{ form.parent }}
                         </div>
                         
                         <div class="form-group m-3">
                             <label>Category Name</label>
-                            <input required name="category_new" type="text" placeholder="Enter a Category Name"
-                                class="form-control">
+                            {{ form.name }}
                         </div>
                         
                         <div class="form-group m-3">
                             <label>Upload image</label>
-                            <input name="image" type="file">
+                            {{ form.image }}
                         </div>
 
                         <button type='submit' class="btn btn-primary m-3">Submit</button>

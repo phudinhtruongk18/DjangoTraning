@@ -8,7 +8,7 @@ from hitcount.models import HitCount
 from sorl.thumbnail import get_thumbnail
 
 from user.models import NomalUser
-from .my_exception import MyValidationError
+from .my_exception import CategoryValidationError
 
 
 class MyNode(models.Model):
@@ -21,7 +21,7 @@ class MyNode(models.Model):
 
 class Category(MyNode, HitCountMixin):
     """A node Category"""
-    user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,null=True)
+    user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,blank=False,null=True)
     name = models.CharField(max_length=200,unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=200,unique=True, editable=False)
@@ -30,11 +30,13 @@ class Category(MyNode, HitCountMixin):
         related_query_name='hit_count_generic_relation')
 
     def save(self, *args, **kwargs):
+        if not self.user:
+            raise CategoryValidationError('User is not defined')
         if self.name:
             self.slug = slugify(self.name)
         if self.parent:
             if self.parent.slug == self.slug:
-                raise MyValidationError('Parent slug and child slug must be different')
+                raise CategoryValidationError('Parent slug and child slug must be different')
 
         super(Category, self).save(*args, **kwargs)
 

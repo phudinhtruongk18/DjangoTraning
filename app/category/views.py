@@ -43,7 +43,7 @@ from django.db import IntegrityError
 from .models import Category
 # from .forms import CategoryForm
 from .serializers import CategorySerializer
-from .my_exception import MyValidationError
+from .my_exception import CategoryValidationError
 
 @api_view(['GET'])
 def category_list(request):
@@ -142,11 +142,13 @@ class CategoryListView(ListView):
 
 class CategoryDetailView(HitCountDetailView):
     model = Category
-    count_hit = True    
+    count_hit = True
     template = 'category/products_by_category.html'
     
     slug_field = 'slug'
 
+    # Post.objects.filter(pk=post.pk).update(views=F('views') + 1)
+    
     def get_context_data(self,page, **kwargs):
         context = super(CategoryDetailView, self).get_context_data(**kwargs)
         # check attribute of object
@@ -173,66 +175,48 @@ class CategoryDetailView(HitCountDetailView):
         context = self.get_context_data(page=page,object=self.object)
         return render(request, 'category/products_by_category.html', context=context)
 
-# def products_by_category(request, category_slug=None):
-
-#     if category_slug is not None:
-#         category = get_object_or_404(Category, slug=category_slug)
-#         products = ProductInCategory.objects.all().filter(category=category)
-#     else:
-#         products = ProductInCategory.objects.all().filter().order_by('product')
-
-#     page = request.GET.get('page')
-#     page = page or 1
-#     panigator = Paginator(products, 3)
-#     paged_products = panigator.get_page(page)
-#     products_count = products.count()
-
-#     context = {
-#         'category': category if 'category' in locals() else None,
-#         'paged_products': paged_products,
-#         'products_count': products_count,
-#    }
-#     return render(request, 'category/products_by_category.html', context=context)
+from .forms import CategoryForm
 
 # create Category with image(optional) if user is login
 @login_required(login_url='login')
 def add_category(request):
-    # get Categorys to get parent Category 
-    categories = Category.objects.all()
+    form = CategoryForm(request.user or None,request.POST or None, request.FILES or None)
+
+    context = {
+        'form':form,
+    }
 
     if request.method == 'POST':
-        data = request.POST
-        image = request.FILES.get('image')
-        name = data['category_new']
-        parent_category_id = data.get('parent_category')
-        # get parent Category
-        parent_category = None
-        if parent_category_id != 'none':
+        if form.is_valid():
             try:
-                parent_category = Category.objects.get(id=int(parent_category_id))
-            except Category.DoesNotExist:
-                messages.warning(request, "Parent Category does not exist!")
-                return render(request, 'category/add_category.html', {'categories':categories})
-            
-        try:
-            category = Category.objects.create(
-            parent=parent_category,
-            name=name,
-            user=request.user,
-            image = image
-            )
-            category.save()
-        except IntegrityError:
-            messages.warning(request, "This category is already exist! Pick another name!")
-            return render(request, 'category/add_category.html', {'categories':categories})
-
-        messages.info(request, "Create Category success!")
-        return redirect('category:add_category')
+                form.save()
+                messages.success(request, 'Category created successfully')
+            except CategoryValidationError as e:
+                messages.warning(request, e)
     
-    context = {
-        'categories':categories,
-    }
     return render(request, 'category/add_category.html', context)
+
+# edit Category if user is login
+@login_required(login_url='login')
+def edit_category(request, category_id):
+
+    category = get_object_or_404(Category,id=category_id)
+    form = CategoryForm(request.user,request.POST or None, request.FILES or None, instance=category)
+
+    context = {
+        'form':form,
+        'category':category,
+    }
+
+    if request.method == 'POST':
+        if form.is_valid():
+            try:
+                form.save()
+                messages.success(request, 'Category updated successfully')
+            except CategoryValidationError as e:
+                messages.warning(request, e)
+    
+    return render(request, 'category/edit_category.html', context)
 
 # delete Category if user is login
 @login_required(login_url='login')
@@ -253,58 +237,4 @@ def delete_category(request, category_id):
     
     messages.warning(request, "Delete category false!")
     return redirect(url)
-
-# edit Category if user is login
-@login_required(login_url='login')
-def edit_category(request, category_id):
-    # check login and check user
-    # form = CategoryForm()
-    try:
-        category_id = int(category_id)
-        category = Category.objects.get(id = category_id)
-    except Category.DoesNotExist:
-        messages.warning(request, "Category does not exist!")
-        return redirect('category:edit_category')
-
-    categories = Category.objects.all()
-
-    if category.user.id == request.user.id:
-        if request.method == 'GET':
-            context = {
-                'category':category,
-                'categories':categories,
-                # 'form':form,
-            }
-            return render(request, 'category/edit_category.html', context)
-        elif request.method == 'POST':
-            data = request.POST
-            image = request.FILES.get('image')
-            name = data['category_new']
-            parent_category = data.get('parent_category')
-            # get parent Category
-            try:
-                parent_category = Category.objects.get(id=int(parent_category))
-            except Category.DoesNotExist:
-                messages.warning(request, "Parent Category does not exist!")
-                return render(request, 'category/edit_category.html', {'category':category})
-            
-            category.name = name
-            category.parent = parent_category
-            if image:
-                category.image = image
-
-            try:
-                category.save()
-            except IntegrityError:
-                messages.warning(request, "Pick another name!")
-                return redirect('category:edit_category')
-            except MyValidationError as e:
-                messages.warning(request, str(e))
-                return redirect('category:edit_category')
-
-
-            messages.info(request, "Update Category success!")
-            return redirect('category:edit_category', category_id=category_id)
-    messages.warning(request, "Update Category false!")
-    return redirect('category:edit_category')
 
