@@ -4,14 +4,20 @@ from .views import CategoryListView, CategoryDetailView
 from .views import category_list
 # from .views import products_by_category
 from .views import add_category,delete_category,edit_category
+import category.views as nah
 
 app_name = 'category'
 
 urlpatterns = [
+    path('fb/', nah.FCategoryListView.as_view(), name='category'),
+    path('fb/detail', nah.FCategoryDetailView.as_view(), name='film_detail'),
+    path('fb/create/', nah.FCategoryCreateView.as_view(), name='film_create'),
+    path('fb/<int:pk>/update/', nah.FCategoryUpdateView.as_view(), name='film_update'),
+    path('fb/<int:pk>/delete/', nah.FCategoryDeleteView.as_view(), name='film_delete'),
     # UI
-    path('', CategoryListView.as_view(), name='category'),
+    
+    # path('', CategoryListView.as_view(), name='category'),
 
-    # path('<slug:category_slug>/',products_by_category, name='products_by_category'),
     path('products/<slug:slug>/',CategoryDetailView.as_view(), name='products_by_category'),
 
     path('add/', add_category, name='add_category'),

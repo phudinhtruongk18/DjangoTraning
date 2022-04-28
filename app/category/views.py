@@ -27,7 +27,6 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
-from product.models import ProductInCategory
 
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets, filters, generics, permissions
@@ -40,10 +39,16 @@ from rest_framework.decorators import api_view
 
 from django.db import IntegrityError
 
+
+from product.models import Product
 from .models import Category
 # from .forms import CategoryForm
 from .serializers import CategorySerializer
 from .my_exception import CategoryValidationError
+
+from django.http import (
+    Http404
+)
 
 @api_view(['GET'])
 def category_list(request):
@@ -119,7 +124,6 @@ class DeleteCategory(generics.RetrieveDestroyAPIView):
     queryset = Category.objects.all()
 
 
-
 class CategoryListView(ListView):
     model = Category
     # comment this line to see all categories (without pagination)
@@ -146,26 +150,23 @@ class CategoryDetailView(HitCountDetailView):
     template = 'category/products_by_category.html'
     
     slug_field = 'slug'
-
     # Post.objects.filter(pk=post.pk).update(views=F('views') + 1)
     
     def get_context_data(self,page, **kwargs):
         context = super(CategoryDetailView, self).get_context_data(**kwargs)
-        # check attribute of object
-        # print('context->',context)
 
         category = context['category']
-        products = ProductInCategory.objects.all().filter(category=category)
-
+        products = category.product_set.all()
         panigator = Paginator(products, 3)
         paged_products = panigator.get_page(page)
         products_count = products.count()
 
         context.update({
-            'category': category if 'category' in locals() else None,
+            'category': category,
             'paged_products': paged_products,
             'products_count': products_count,
         })
+        
         return context
 
     def get(self, request, *args, **kwargs):
@@ -180,43 +181,45 @@ from .forms import CategoryForm
 # create Category with image(optional) if user is login
 @login_required(login_url='login')
 def add_category(request):
-    form = CategoryForm(request.user or None,request.POST or None, request.FILES or None)
+    form = CategoryForm(request.POST or None, request.FILES or None)
 
     context = {
+        'type_of_crud':'Add',
         'form':form,
     }
 
     if request.method == 'POST':
         if form.is_valid():
             try:
-                form.save()
+                category = form.save(commit=False)
+                category.user = request.user
+                category.save()
                 messages.success(request, 'Category created successfully')
             except CategoryValidationError as e:
                 messages.warning(request, e)
-    
-    return render(request, 'category/add_category.html', context)
+    return render(request, 'category/add_edit_category.html', context)
 
 # edit Category if user is login
 @login_required(login_url='login')
 def edit_category(request, category_id):
-
     category = get_object_or_404(Category,id=category_id)
-    form = CategoryForm(request.user,request.POST or None, request.FILES or None, instance=category)
+
+    if request.user != category.user:
+        raise Http404('Not allow!')
+
+    form = CategoryForm(request.POST or None, request.FILES or None, instance=category)
 
     context = {
         'form':form,
         'category':category,
+        'type_of_crud':'Edit',
     }
 
     if request.method == 'POST':
         if form.is_valid():
-            try:
-                form.save()
-                messages.success(request, 'Category updated successfully')
-            except CategoryValidationError as e:
-                messages.warning(request, e)
-    
-    return render(request, 'category/edit_category.html', context)
+            form.save()
+            messages.success(request, 'Category updated successfully')
+    return render(request, 'category/add_edit_category.html', context)
 
 # delete Category if user is login
 @login_required(login_url='login')
@@ -238,3 +241,35 @@ def delete_category(request, category_id):
     messages.warning(request, "Delete category false!")
     return redirect(url)
 
+from django.views import View
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
+
+class CategoryBaseView(View):
+    model = Category
+    fields = '__all__'
+    success_url = reverse_lazy('category:category')
+
+class FCategoryListView(CategoryBaseView, ListView):
+    paginate_by = 3
+    context_object_name = 'paged_categories'
+    template_name = 'category/categories.html'
+    """View to list all Category.
+    Use the 'category_list' variable in the template
+    to access all Film objects"""
+
+class FCategoryDetailView(CategoryBaseView, DetailView):
+    """View to list the details from one film.
+    Use the 'film' variable in the template to access
+    the specific film here and in the Views below"""
+
+class FCategoryCreateView(CategoryBaseView, CreateView):
+    """View to create a new film"""
+
+class FCategoryUpdateView(CategoryBaseView, UpdateView):
+    """View to update a film"""
+
+class FCategoryDeleteView(CategoryBaseView, DeleteView):
+    """View to delete a film"""

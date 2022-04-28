@@ -17,7 +17,7 @@
                             <div id="carouselExampleInterval" class="carousel slide" data-ride="carousel">
                                 <div class="carousel-inner">
                                 
-                                  {% for photo in photos %}
+                                  {% for photo in product.photo_set.all %}
                                     {% if forloop.first %}
                                     <!-- headline article -->
                                         <div class="carousel-item active" data-interval="1000">
@@ -172,7 +172,7 @@
                 <header class="section-heading">
                     <h3>Customer Reviews</h3>
                 </header>
-                {% for comment in comments %}
+                {% for comment in product.comment_set.all %}
                     <article class="box mb-3">
                         <div class="icontext w-100">
                             <div class="text">

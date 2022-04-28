@@ -27,7 +27,7 @@
 								<ul class="list-unstyled list-lg">
 									{% for product in paged_products %}
 									<li>
-										<a>{{ product.product.name }}</a>
+										<a>{{ product.name }}</a>
 									</li>
 									{% endfor %}
 							</a>
@@ -64,26 +64,26 @@
 					<div class="col-md-4">
 						<figure class="card card-product-grid">
 							<div class="img-wrap">
-								{% if  product.thumbnail_url != '' %}
+								{% if  product.thumb != '' %}
                                 {% comment %} REPLACE LATER SOME IMAGE {% endcomment %}
-									<img src="{{ product.thumbnail_url }}"/>
+									<img src="{{ product.thumb }}"/>
 								{% endif %}
 							</div>
 							<figcaption class="info-wrap">
 								<div class="fix-height">
-									<a href="{{ product.product.get_url }}" class="title">{{ product.product.name }}</a>
+									<a href="{{ product.get_url }}" class="title">{{ product.name }}</a>
 
 									<div class="price-wrap mt-2">
-										<span class="price">Price: {{ product.product.price_display }}</span>
+										<span class="price">Price: {{ product.price_display }}</span>
 									</div>
 
 									<div class="price-wrap mt-2">
                                         {% comment %} REPLACE LATER {% endcomment %}
-										<span class="price">Views: {% get_hit_count for product.product %}</span>
+										<span class="price">Views: {% get_hit_count for product %}</span>
 
 									</div>
 								</div>
-								<a href="{{ product.product.get_url }}" class="btn btn-block btn-primary">View detail</a>
+								<a href="{{ product.get_url }}" class="btn btn-block btn-primary">View detail</a>
 							</figcaption>
 						</figure>
 					</div>

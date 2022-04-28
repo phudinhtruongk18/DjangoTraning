@@ -8,10 +8,8 @@ from .models import Comment
 @login_required(login_url='login')
 def delete_comment(request, comment_id):
     url = request.META.get('HTTP_REFERER')
-    # check login and check user
     try:
-        comment_id = int(comment_id)
-        comment = Comment.objects.get(id = comment_id)
+        comment = Comment.objects.get(id = int(comment_id))
     except Comment.DoesNotExist:
         messages.error(request, "comment does not exist!")
         return redirect(url)
@@ -26,6 +24,7 @@ def delete_comment(request, comment_id):
 
 @login_required(login_url='login')
 def submit_comment(request, product_id):
+    """For product: Update comment if it exists, otherwise create a new one """
     url = request.META.get('HTTP_REFERER')
     if request.method == 'POST':
         try:
