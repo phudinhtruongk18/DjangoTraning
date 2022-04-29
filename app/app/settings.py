@@ -90,6 +90,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social_django.middleware.SocialAuthExceptionMiddleware',  # <--
 ]
 
 ROOT_URLCONF = 'app.urls'
@@ -216,7 +218,15 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '897327147963-57bk3t7jdkf3o6e25ff8j5srfqlasjjr.a
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 AUTH_USER_MODEL = 'user.NomalUser'
-LOGIN_REDIRECT_URL = 'login'
+
+# LOGIN_URL = 'login'
+# LOGOUT_URL = 'logout'
+# LOGIN_REDIRECT_URL = 'dashboard'
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'dashboard'
+SOCIAL_AUTH_RAISE_EXCEPTIONS = True
+
 SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:8000']
 
 # </========== CONGIFGURE AUTH ===========>

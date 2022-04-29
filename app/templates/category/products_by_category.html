@@ -27,7 +27,7 @@
 								<ul class="list-unstyled list-lg">
 									{% for product in paged_products %}
 									<li>
-										<a>{{ product.name }}</a>
+										<a href={{ product.get_url }}>{{ product.name }}</a>
 									</li>
 									{% endfor %}
 							</a>

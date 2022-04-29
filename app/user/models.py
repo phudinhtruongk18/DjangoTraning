@@ -11,13 +11,14 @@ from django.utils.encoding import force_bytes
 from django.dispatch import receiver
 from django.db.models.signals import (
         post_save,
+        pre_save
 )
 
 
 # Create your models here.
 class MyAccountManager(BaseUserManager):
-    def create_user(self, username, email, password=None, first_name="", last_name="",**extra_fields):
-        print("**extra_fields->",extra_fields)
+    def create_user(self, username, email, password=None, first_name="", last_name="",*something,**extra_fields):
+
         if not email:
             raise ValueError('Email address is required')
 
@@ -33,7 +34,7 @@ class MyAccountManager(BaseUserManager):
             is_staff=True,
             is_active=False,
         )
-
+        
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -88,11 +89,22 @@ class NomalUser(AbstractBaseUser):
     def full_name(self):
         return str(self.first_name) + " " + str(self.last_name)
 
+    # def is_authenticated(self):
+        # return True
+
+@receiver(pre_save, sender=NomalUser)
+def user_post_save_receiver(sender, instance, *args, **kwargs):
+    if instance.social_auth.exists():
+        instance.is_active = True
+
+
 @receiver(post_save, sender=NomalUser)
 def user_post_save_receiver(sender, instance, created, *args, **kwargs):
     """
     after saved in the database
     """
+    print("user_post_save_receiver")
+        
     uid = urlsafe_base64_encode(force_bytes(instance.pk))
     current_site = Site.objects.get_current()
     token = default_token_generator.make_token(instance)

@@ -256,6 +256,16 @@ class FCategoryListView(CategoryBaseView, ListView):
     paginate_by = 3
     context_object_name = 'paged_categories'
     template_name = 'category/categories.html'
+    # get all category 
+
+    def get_context_data(self, **kwargs):
+        context = super(FCategoryListView, self).get_context_data(**kwargs)
+        context.update({
+            'categories_count': self.object_list.count(),
+            'all_categories': self.object_list,
+        })
+        return context
+
     """View to list all Category.
     Use the 'category_list' variable in the template
     to access all Film objects"""

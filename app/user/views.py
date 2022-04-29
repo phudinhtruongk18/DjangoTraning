@@ -37,9 +37,9 @@ def register(request):
 def login(request):
     # check login gooogle
     if request.user.is_authenticated:
-        print(request.user)
-        messages.success(request, "Login successful",request.user.username,request.user.is_active)
+        messages.success(request, f'Login successful {str(request.user.username)} {str(request.user.is_active)}')
         return redirect('dashboard')
+
         
     elif request.method == "POST":
         email = request.POST.get('email')
@@ -104,20 +104,8 @@ class MyApiRegister(APIView):
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-"""USER VIEW BUT NEED CATALOG AND PRODUCT"""
-from category.models import Category
-from product.models import Product
-
 # Create your views here.
 @login_required(login_url='login')
 def user_manage_view(request):
-    user = request.user
-    # get all catalogs create by user
-    categories = Category.objects.all().filter(user=user)
-    # get all prodcut created by user
-    products = Product.objects.all().filter(user=user)
-    photos = [product.thumb for product in products]
-    # zip 
-    product_with_thumb = zip(products, photos)
-    context = {'categories':categories, 'product_with_thumb':product_with_thumb}
+    context = {'user':request.user}
     return render(request, 'user/user_manage_view.html', context)

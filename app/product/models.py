@@ -51,8 +51,7 @@ class Product(models.Model,HitCountMixin):
     def thumb(self):
         # get first url photo or ''
         try:
-            photo = Photo.objects.filter(product=self)[:1].get()
-            print("lof,",photo.thumbnail.url)
+            photo = self.photo_set.first()
             return photo.thumbnail.url
             # return photo.image.url
         except Exception as e:

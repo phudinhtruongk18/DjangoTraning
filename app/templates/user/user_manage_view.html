@@ -31,7 +31,7 @@ Manage | Aram Catalog
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {% for category in categories %}
+                                    {% for category in user.category_set.all %}
                                     <tr>
                                         <td>{{ category.id }}</td>
                                         <td>{{ category.name }}</td>
@@ -63,13 +63,13 @@ Manage | Aram Catalog
         <div class="row justify-content-center">
             {% comment %} list all category with edit delete button {% endcomment %}
             
-            {% for product,thumb in product_with_thumb %}
+            {% for product in user.product_set.all %}
             <div class="col-lg-4">
                 <div class="card">
                     <figure class="card card-product-grid">
                         <div class="img-wrap">
                             {% if thumb != '' %}
-                                <img src="{{ thumb }}" class="card-img-top">
+                                <img src="{{ product.thumb }}" class="card-img-top">
                             {% else %}
                                 <img src="{% static 'images/no-image.jpg' %}" class="img-fluid" alt="">
                             {% endif %}

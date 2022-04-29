@@ -4,7 +4,7 @@ from user.models import NomalUser
 
 
 class Comment(models.Model):
-    """Only allow user can have oen comment for a product"""
+    """Only allow user can have one comment for a product"""
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     user = models.ForeignKey(NomalUser, on_delete=models.CASCADE)
     content = models.TextField(max_length=500, blank=True)

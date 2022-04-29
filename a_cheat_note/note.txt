@@ -1,0 +1,14 @@
+nghĩ ra đề tài môi trường
+
+retry task
+too long (time_out)
+
+re src naming
+atomic quẻy
+chery task
+
+todo:
+	ít view
+	nhiều model? (sử dụng khóa ở model? create? create? by user?)
+
+	
