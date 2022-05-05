@@ -34,11 +34,15 @@ def add_product(request):
         if form.is_valid():
             try:
                 product = form.save(commit=False)
-                product.user = request.user
                 product.save()
 
+                for category in form.cleaned_data['categories']:
+                    product.categories.add(category)
+                    
                 for photo in request.FILES.getlist('photos'):
                     Photo.objects.create(image=photo,product=product)
+                
+                
 
                 messages.success(request, 'Product created successfully')
             except ValidationError as e:
@@ -75,7 +79,7 @@ def delete_product(request, product_id):
     try:
         product_id = int(product_id)
         product = Product.objects.get(id = product_id)
-        if product.user.id == request.user.id:
+        if product.owner.id == request.user.id:
             product.delete()
             messages.success(request, "Your product has been deleted!")
             return redirect(url)
@@ -97,7 +101,7 @@ def delete_photo(request, photo_id):
         messages.warning(request, "Photo does not exist!")
         return redirect(url)
 
-    if photo.product.user.id == request.user.id:
+    if photo.product.owner.id == request.user.id:
         photo.delete()
         messages.success(request, "Your photo has been deleted!")
         return redirect(url)

@@ -15,7 +15,7 @@ from sorl.thumbnail import get_thumbnail
 
 class Product(models.Model,HitCountMixin):
     """A product can have many categories"""
-    user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,null=True)
+    owner = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,blank=False,null=True)
     name = models.CharField(max_length=200,unique = True)
     date_added = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=200,unique=True, editable=False)
@@ -67,9 +67,6 @@ class Photo(models.Model):
 
     def save(self, *args, **kwargs):
         super(Photo, self).save(*args, **kwargs)
-
-    class Meta:
-        unique_together = ('product', 'id')
 
     @property
     def thumbnail(self):

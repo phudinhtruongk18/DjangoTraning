@@ -14,7 +14,7 @@ def delete_comment(request, comment_id):
         messages.error(request, "comment does not exist!")
         return redirect(url)
 
-    if comment.user.id == request.user.id:
+    if comment.owner.id == request.user.id:
         comment.delete()
         messages.success(request, "Your review has been deleted!")
         return redirect(url)
@@ -28,7 +28,7 @@ def submit_comment(request, product_id):
     url = request.META.get('HTTP_REFERER')
     if request.method == 'POST':
         try:
-            comment = Comment.objects.get(user__id=request.user.id, product__id=product_id)
+            comment = Comment.objects.get(owner__id=request.user.id, product__id=product_id)
             form = CommentForm(request.POST, instance=comment)
             form.save()
             messages.success(request, "Thanks for the updating review!")
@@ -41,7 +41,7 @@ def submit_comment(request, product_id):
                 data.content = form.cleaned_data['content']
                 data.ip = request.META.get('REMOTE_ADDR')
                 data.product_id = product_id
-                data.user_id = request.user.id
+                data.owner = request.user
                 data.save()
                 messages.success(request, "Thanks for the review!")
                 return redirect(url)

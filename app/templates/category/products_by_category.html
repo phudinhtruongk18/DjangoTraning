@@ -67,6 +67,8 @@
 								{% if  product.thumb != '' %}
                                 {% comment %} REPLACE LATER SOME IMAGE {% endcomment %}
 									<img src="{{ product.thumb }}"/>
+								{% else %}
+                                	<img src="{% static 'images/no-image.jpg' %}" class="img-fluid" alt="">
 								{% endif %}
 							</div>
 							<figcaption class="info-wrap">

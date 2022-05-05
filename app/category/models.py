@@ -8,7 +8,8 @@ from hitcount.models import HitCount
 from sorl.thumbnail import get_thumbnail
 
 from user.models import NomalUser
-from .my_exception import CategoryValidationError
+# from .my_exception import CategoryValidationError
+from django.core.exceptions import ValidationError
 
 from django.dispatch import receiver
 from django.db.models.signals import (
@@ -23,10 +24,9 @@ class MyNode(models.Model):
     class Meta:
         abstract = True
 
-
 class Category(MyNode, HitCountMixin):
     """A node Category"""
-    user = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,blank=False,null=True)
+    owner = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,blank=False,null=True)
     name = models.CharField(max_length=200,unique=True)
     date_added = models.DateTimeField(auto_now_add=True)
     slug = models.SlugField(max_length=200,unique=True, editable=False)
@@ -38,16 +38,17 @@ class Category(MyNode, HitCountMixin):
         verbose_name_plural = 'Categories'
         ordering = ['date_added']
 
-    def clean(self):
+    # def clean(self):
+
+    def save(self, *args, **kwargs):
         if self.name:
             self.slug = slugify(self.name)
         if self.parent:
             if self.parent.slug == self.slug:
-                raise CategoryValidationError({'parent':'Parent slug and child slug must be different'})
+                raise ValidationError({'parent':'Parent slug and child slug must be different'})
 
-    def save(self, *args, **kwargs):
-        if not self.user:
-            raise CategoryValidationError({'user':'User is not defined'})
+        # validator
+        self.full_clean()
         super(Category, self).save(*args, **kwargs)
 
     def __str__(self):

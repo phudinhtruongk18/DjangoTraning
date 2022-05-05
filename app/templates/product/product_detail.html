@@ -177,7 +177,7 @@
                         <div class="icontext w-100">
                             <div class="text">
                                 {% if user.is_authenticated %}
-                                    {% if user.id == comment.user_id %}
+                                    {% if user == comment.owner %}
                                         <a href="{% url 'delete_comment' comment.id %}" class="btn btn-outline-danger float-md-right">Delete</a>
                                     {% endif %}
                                 {% endif %}

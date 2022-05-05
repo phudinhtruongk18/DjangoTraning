@@ -47,7 +47,8 @@
                         <div class="form-group m-3">
                             <label>Upload image</label>
                             {{ form.image }}
-                            {% if category.image != '' %}
+
+                            {% if category %}
                                 <div class="row">
                                     <div class="col-md-4">
                                         <figure class="card card-product-grid">
@@ -61,6 +62,7 @@
                                     </div>
                                 </div>
                             {% endif %}
+                            
                         </div>
 
                         <button type='submit' class="btn btn-primary m-3">Submit</button>

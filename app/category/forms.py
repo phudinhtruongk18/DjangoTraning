@@ -12,4 +12,3 @@ class CategoryForm(forms.ModelForm):
         self.fields['parent'].widget.attrs['class'] = 'form-control'
         self.fields['name'].widget.attrs['placeholder'] = 'Enter a Category Name'
         self.fields['name'].widget.attrs['class'] = 'form-control'
-

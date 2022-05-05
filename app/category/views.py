@@ -27,122 +27,46 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 
+from django.core.exceptions import ValidationError
 
-from django.shortcuts import get_object_or_404
-from rest_framework import viewsets, filters, generics, permissions
-from rest_framework.response import Response
-from rest_framework.views import APIView
-from rest_framework import status
-from rest_framework.parsers import MultiPartParser, FormParser
-# Display Posts
-from rest_framework.decorators import api_view
-
-from django.db import IntegrityError
-
-
-from product.models import Product
 from .models import Category
 # from .forms import CategoryForm
-from .serializers import CategorySerializer
-from .my_exception import CategoryValidationError
+# from .my_exception import CategoryValidationError
 
 from django.http import (
     Http404
 )
 
-@api_view(['GET'])
-def category_list(request):
-    categories = Category.objects.all()
-    serializer = CategorySerializer(categories, many=True)
-    return Response(serializer.data)
-    
-class CategoryList(generics.ListAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-    class Meta:
-        read_only_fields = ('name', 'slug',)
+from .forms import CategoryForm
+from django.views import View
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse_lazy
 
-
-class CategoryDetail(generics.RetrieveAPIView):
-
-    serializer_class = CategorySerializer
-
-    def get_object(self, queryset=None, **kwargs):
-        item = self.kwargs.get('pk')
-        return get_object_or_404(Category, slug=item)
-
-# Category Search
-
-
-class CategoryListDetailfilter(generics.ListAPIView):
-
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    filter_backends = [filters.SearchFilter]
-    # '^' Starts-with search.
-    # '=' Exact matches.
-    search_fields = ['^slug']
-
-# Post Admin
-
-# class CreatePost(generics.CreateAPIView):
-#     permission_classes = [permissions.IsAuthenticated]
-#     queryset = Post.objects.all()
-#     serializer_class = PostSerializer
-
-
-class CreateCategory(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-    parser_classes = [MultiPartParser, FormParser]
-
-    def post(self, request, format=None):
-        print(request.data)
-        serializer = CategorySerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class AdminCategoryDetail(generics.RetrieveAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-
-
-class EditCategory(generics.UpdateAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-
-
-class DeleteCategory(generics.RetrieveDestroyAPIView):
-    permission_classes = [permissions.IsAuthenticated]
-    serializer_class = CategorySerializer
-    queryset = Category.objects.all()
-
-
-class CategoryListView(ListView):
+class CategoryBaseView(View):
     model = Category
-    # comment this line to see all categories (without pagination)
+    fields = '__all__'
+    success_url = reverse_lazy('category:category')
+
+class CategoryListView(CategoryBaseView, ListView):
     paginate_by = 3
     context_object_name = 'paged_categories'
     template_name = 'category/categories.html'
+    # get all category
 
     def get_context_data(self, **kwargs):
         context = super(CategoryListView, self).get_context_data(**kwargs)
-        all_categories = Category.objects.all()
-        all_categories_count = all_categories.count()
-        # print('context->',context)
-
         context.update({
-            'categories_count': all_categories_count,
-            'all_categories': all_categories,
+            'categories_count': self.object_list.count(),
+            'all_categories': self.object_list,
         })
-
         return context
+
+    """View to list all Category.
+    Use the 'category_list' variable in the template
+    to access all Film objects"""
+
 
 class CategoryDetailView(HitCountDetailView):
     model = Category
@@ -176,11 +100,10 @@ class CategoryDetailView(HitCountDetailView):
         context = self.get_context_data(page=page,object=self.object)
         return render(request, 'category/products_by_category.html', context=context)
 
-from .forms import CategoryForm
 
-# create Category with image(optional) if user is login
 @login_required(login_url='login')
 def add_category(request):
+    """View to add category"""
     form = CategoryForm(request.POST or None, request.FILES or None)
 
     context = {
@@ -192,19 +115,18 @@ def add_category(request):
         if form.is_valid():
             try:
                 category = form.save(commit=False)
-                category.user = request.user
+                category.owner = request.user
                 category.save()
                 messages.success(request, 'Category created successfully')
-            except CategoryValidationError as e:
+            except ValidationError as e:
                 messages.warning(request, e)
     return render(request, 'category/add_edit_category.html', context)
 
-# edit Category if user is login
 @login_required(login_url='login')
 def edit_category(request, category_id):
     category = get_object_or_404(Category,id=category_id)
 
-    if request.user != category.user:
+    if request.user != category.owner:
         raise Http404('Not allow!')
 
     form = CategoryForm(request.POST or None, request.FILES or None, instance=category)
@@ -217,69 +139,29 @@ def edit_category(request, category_id):
 
     if request.method == 'POST':
         if form.is_valid():
-            form.save()
-            messages.success(request, 'Category updated successfully')
+            try:
+                form.save()
+                messages.success(request, 'Category updated successfully')
+            except ValidationError as e:
+                messages.warning(request, e)
     return render(request, 'category/add_edit_category.html', context)
 
-# delete Category if user is login
-@login_required(login_url='login')
-def delete_category(request, category_id):
-    url = request.META.get('HTTP_REFERER')
-    # check login and check user
-    try:
-        category_id = int(category_id)
-        category = Category.objects.get(id = category_id)
-    except Category.DoesNotExist:
-        messages.warning(request, "Category does not exist!")
-        return redirect(url)
 
-    if category.user.id == request.user.id:
-        category.delete()
-        messages.success(request, "Your category has been deleted!")
-        return redirect(url)
+class CategoryDeleteView(CategoryBaseView, DeleteView):
+    manage_url = 'user_manage_view'
     
-    messages.warning(request, "Delete category false!")
-    return redirect(url)
+    def post(self, request, *args, **kwargs):
+        return self.delete(request, *args, **kwargs)
 
-from django.views import View
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
-from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.urls import reverse_lazy
-
-class CategoryBaseView(View):
-    model = Category
-    fields = '__all__'
-    success_url = reverse_lazy('category:category')
-
-class FCategoryListView(CategoryBaseView, ListView):
-    paginate_by = 3
-    context_object_name = 'paged_categories'
-    template_name = 'category/categories.html'
-    # get all category 
-
-    def get_context_data(self, **kwargs):
-        context = super(FCategoryListView, self).get_context_data(**kwargs)
-        context.update({
-            'categories_count': self.object_list.count(),
-            'all_categories': self.object_list,
-        })
-        return context
-
-    """View to list all Category.
-    Use the 'category_list' variable in the template
-    to access all Film objects"""
-
-class FCategoryDetailView(CategoryBaseView, DetailView):
-    """View to list the details from one film.
-    Use the 'film' variable in the template to access
-    the specific film here and in the Views below"""
-
-class FCategoryCreateView(CategoryBaseView, CreateView):
-    """View to create a new film"""
-
-class FCategoryUpdateView(CategoryBaseView, UpdateView):
-    """View to update a film"""
-
-class FCategoryDeleteView(CategoryBaseView, DeleteView):
-    """View to delete a film"""
+    def delete(self, request, *args, **kwargs):
+        """
+        Call the delete() method on the fetched object and then redirect to the
+        manage URL.
+        """
+        self.object = self.get_object()
+        if self.object.owner != self.request.user:
+            messages.warning(self.request, "You can not delete this category!")
+            return redirect(self.manage_url)
+        self.object.delete()
+        messages.success(self.request, "Your category has been deleted!")
+        return redirect(self.manage_url)

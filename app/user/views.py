@@ -101,6 +101,7 @@ class MyApiRegister(APIView):
             user = serializer.save()
             if user:
                 json = serializer.data
+                json.update({'msg': 'active your email to complete the registration'})
                 return Response(json, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 

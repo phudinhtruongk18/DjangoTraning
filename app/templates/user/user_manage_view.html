@@ -27,7 +27,7 @@ Manage | Aram Catalog
                                         <th>Name</th>
                                         <th>Parent</th>
                                         <th>Action</th>
-                                        <th>Create</th>
+                                        <th>Date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -42,7 +42,7 @@ Manage | Aram Catalog
                                             <a href="{% url 'category:edit_category' category.id %}" class="btn btn-outline-secondary">Edit</a>
                                             <a href="{% url 'category:delete_category' category.id %}" class="btn btn-danger">Delete</a>
                                         </td>
-                                        <td>Me</td>
+                                        <td>{{ category.date_added }}</td>
 
                                     </tr>
                                     {% endfor %}
@@ -68,7 +68,7 @@ Manage | Aram Catalog
                 <div class="card">
                     <figure class="card card-product-grid">
                         <div class="img-wrap">
-                            {% if thumb != '' %}
+                            {% if product.thumb != '' %}
                                 <img src="{{ product.thumb }}" class="card-img-top">
                             {% else %}
                                 <img src="{% static 'images/no-image.jpg' %}" class="img-fluid" alt="">

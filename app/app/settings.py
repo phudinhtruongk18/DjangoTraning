@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'corsheaders',
     # -----------rest_framework-------------------
     'rest_framework',
+    'rest_framework.authtoken',
     # -----------SITE-LIBRARY-------------------
     'django.contrib.sites',
     # -----------THUMBNAIL-LIBRARY-------------------
@@ -248,7 +249,16 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
         'drf_social_oauth2.authentication.SocialAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
+    # my custom default settings
+    'DEFAULT_PAGINATION_CLASS': 'app.my_pagination.SmallResultsSetPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'app.my_permissions.IsOwnerOrReadOnly',
+    ),
+    # throttlleing (https://www.django-rest-framework.org/api-guide/throttling/) use nginx to do this instead of django
+    
+
 }
 
 # allow ip and domain

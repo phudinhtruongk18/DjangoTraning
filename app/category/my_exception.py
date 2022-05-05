@@ -1,5 +1,5 @@
 
-from django.core.exceptions import ValidationError
+# from django.core.exceptions import ValidationError
 
-class CategoryValidationError(ValidationError):
-    pass
+# class CategoryValidationError(ValidationError):
+#     pass

@@ -94,3 +94,11 @@ if your signals is not connected around apps, you can place it on your models.py
 But if you are using it to connect different apps, or a common signal to multiple apps, 
 you can should have a separated file to place.
 
+
+{
+    "access_token": "JLBWtnFoyMnyzuk3w5MF5lgaQEoRI1",
+    "expires_in": 36000,
+    "token_type": "Bearer",
+    "scope": "read write",
+    "refresh_token": "P0Dz2ZwRfymIfmhgq3fyjmeWMKcB7p"
+}

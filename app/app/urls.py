@@ -20,6 +20,8 @@ from django.conf import settings
 
 from category.views import CategoryListView
 
+from rest_framework.authtoken.views import obtain_auth_token
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('me/', include("user.urls")),
@@ -33,6 +35,7 @@ urlpatterns = [
     # OAuth
     path('', include('social_django.urls', namespace='social')),
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
+    path('auth_macdinh/', obtain_auth_token),
     # auth wit api
 ]
 
