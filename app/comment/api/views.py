@@ -1,5 +1,5 @@
 """
-CRUD category:
+CRUD product:
     - SINGLE
     - LIST (create, read, delete)
 - read is always available
@@ -7,41 +7,31 @@ CRUD category:
 - edit when owner or admin
 - delete when owner or admin
 """
-from category.models import Category
-from .serializers import CategorySerializer,ShortCategorySerializer
 from rest_framework import generics
-
 from rest_framework import permissions
 from rest_framework import authentication
+
+from comment.models import Comment
+from .serializers import CommentSerializer
 
 
 # -------------------- SINGLE --------------------
 
-class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = [permissions.DjangoObjectPermissions]
     authentication = (authentication.TokenAuthentication,)
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
     lookup_field = 'pk'
-
-    # def get(self, request, *args, **kwargs):
-    #     print(request.user.is_authenticated)
-    #     return self.retrieve(request, *args, **kwargs)
-
-    # def delete(self, request, *args, **kwargs):
-    #     return self.destroy(request, *args, **kwargs)
-
-    # def put(self, request, *args, **kwargs):
-    #     return self.update(request, *args, **kwargs)
 
 # -------------------- LIST --------------------
 
 from rest_framework.authtoken.models import Token
 
-class CategoryListCreateAPIView(generics.ListCreateAPIView):
+class CommentListCreateAPIView(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Category.objects.all()
-    serializer_class = ShortCategorySerializer
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
     def perform_create(self, serializer):
         # get token

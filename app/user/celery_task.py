@@ -2,14 +2,13 @@ from datetime import datetime, timedelta
 from typing import NoReturn
 from .models import NomalUser
 
-from django.template.loader import render_to_string 
 from django.core.mail import EmailMessage
 
 from app.settings import EMAIL_HOST_USER
 
 def report_user_daily() -> NoReturn:
     """ Daily report for admin the number of registered users """
-    user_in_day = NomalUser.objects.filter(last_login__gte=datetime.now()-timedelta(days=1)).count()
+    user_in_day = NomalUser.objects.filter(date_joined__gte=datetime.now()-timedelta(days=1)).count()
 
     mail_subject = 'New user daily report'
     html_message = f"""

@@ -102,3 +102,12 @@ you can should have a separated file to place.
     "scope": "read write",
     "refresh_token": "P0Dz2ZwRfymIfmhgq3fyjmeWMKcB7p"
 }
+
+indexes = [
+            models.Index(fields=['last_name', 'first_name']),
+            models.Index(fields=['first_name'], name='first_name_idx'),
+        ]
+ tìm kiếm theo cây nhị phân, chia tên thành các node
+ 
+ cd client_test
+ python -m http.server 6969

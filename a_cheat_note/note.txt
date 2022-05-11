@@ -10,5 +10,3 @@ chery task
 todo:
 	ít view
 	nhiều model? (sử dụng khóa ở model? create? create? by user?)
-
-	

@@ -15,4 +15,6 @@ urlpatterns = [
     path('delete/<int:pk>/', CategoryDeleteView.as_view(), name='delete_category'),
 
     path('api/', include("category.api.urls")),
+
+
 ]

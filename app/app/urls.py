@@ -32,6 +32,8 @@ urlpatterns = [
     path('product/', include("product.urls")),
     path('comment/', include("comment.urls")),
 
+    path('api/search/', include("search.api.urls")),
+
     # OAuth
     path('', include('social_django.urls', namespace='social')),
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),

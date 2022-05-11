@@ -1,5 +1,5 @@
 """
-CRUD category:
+CRUD product:
     - SINGLE
     - LIST (create, read, delete)
 - read is always available
@@ -7,21 +7,42 @@ CRUD category:
 - edit when owner or admin
 - delete when owner or admin
 """
-from category.models import Category
-from .serializers import CategorySerializer,ShortCategorySerializer
 from rest_framework import generics
-
 from rest_framework import permissions
 from rest_framework import authentication
 
+from product.models import Product,Photo
+from .serializers import ProductSerializer,PhotoSerializer
+from .short_serializers import ShortProductSerializer
+
+class IsProductOwnerOrReadOnly(permissions.BasePermission):
+    """
+    Special permission for photo api
+    """
+
+    def has_object_permission(self, request, view, obj):
+        # Read permissions are allowed to any request,
+        # so we'll always allow GET, HEAD or OPTIONS requests.
+        if request.method in permissions.SAFE_METHODS:
+            return True
+
+        # Instance must have an attribute named `owner`.
+        return obj.product.owner == request.user
+        
+class PhotoDetail(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsProductOwnerOrReadOnly]
+
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer
+    lookup_field = 'pk'
 
 # -------------------- SINGLE --------------------
 
-class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
+class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = [permissions.DjangoObjectPermissions]
     authentication = (authentication.TokenAuthentication,)
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
     lookup_field = 'pk'
 
     # def get(self, request, *args, **kwargs):
@@ -38,10 +59,10 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 
 from rest_framework.authtoken.models import Token
 
-class CategoryListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    queryset = Category.objects.all()
-    serializer_class = ShortCategorySerializer
+    queryset = Product.objects.all()
+    serializer_class = ShortProductSerializer
 
     def perform_create(self, serializer):
         # get token

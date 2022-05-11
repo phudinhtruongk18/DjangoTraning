@@ -17,6 +17,28 @@ from django.db.models.signals import (
         pre_save,
 )
 
+from django.db.models import Q 
+
+class CategoryQuerySet(models.QuerySet):
+    def is_have_owner(self):
+        return self.filter(owner__isnull=False)
+
+    def search(self, query,owner=None):
+        lookup = (Q(name__icontains=query) | Q(date_added__icontains=query))
+        qs = self.is_have_owner().filter(lookup)
+        if owner is not None:
+            qs2 = qs.filter(owner=owner)
+            qs = (qs|qs2).distinct()
+        return qs
+
+class CategoryManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        return CategoryQuerySet(self.model, using=self._db)
+    
+    def search(self, query,owner=None):
+        lookup = (Q(name__icontains=query) | Q(date_added__icontains=query))
+        qs = self.get_queryset().search(query,owner=owner)
+
 class MyNode(models.Model):
     """My own abstract node model to implement tree structure"""
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
@@ -33,6 +55,8 @@ class Category(MyNode, HitCountMixin):
     image = models.ImageField(null=True, blank=True)
     hit_count_generic = GenericRelation(HitCount, object_id_field='object_pk',
         related_query_name='hit_count_generic_relation')
+
+    objects = CategoryManager()
 
     class Meta:
         verbose_name_plural = 'Categories'

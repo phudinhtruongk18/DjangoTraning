@@ -7,26 +7,32 @@ from django.db.models import Count, F, Value
 from category.my_validators import validate_name,validate_owner,unique_validator
 from category.models import Category
 
-class CategorySerializer(serializers.ModelSerializer):
+from product.api.short_serializers import ShortProductSerializer
+
+class ShortCategorySerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='category:test_api_sing', lookup_field='pk')
-    owner = serializers.SerializerMethodField('_owner',validators=[validate_owner])
-    # parent = serializers.CharField(source='parent.name')
-    parent = serializers.SerializerMethodField()
+    name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     views_count = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = Category
+        fields = ('url', 'name','date_added','image','views_count')
+
+    def get_views_count(self, obj):
+        return obj.hit_count.hits
+
+
+class CategorySerializer(ShortCategorySerializer):
+    owner = serializers.SerializerMethodField('_owner',validators=[validate_owner],read_only=True)
+    parent = serializers.SerializerMethodField()
     slug = serializers.CharField(read_only=True)
-    
-    name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
+    products = ShortProductSerializer(source="product_set", many=True)
 
     class Meta:
         model = Category
         # fields = ('current_user','user', 'parent','slug', 'name', 'date_added', 'image', 'views_count')
-        fields = ('url','owner', 'parent','slug', 'name', 'date_added', 'image', 'views_count')
-
-    def get_views_count(self, obj):
-        # if not isinstance(obj, Catalog):
-        #     return None
-        return obj.hit_count.hits
+        fields = ('url','owner', 'parent','slug', 'name', 'date_added', 'image', 'views_count','products')
 
     # def get_image_url(self, obj):
     #     return obj.image.url

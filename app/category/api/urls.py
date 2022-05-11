@@ -5,7 +5,7 @@ from .views import CategoryListCreateAPIView
 
 
 urlpatterns = [
-    path('v2/', include('category.api.routers'), name='test_api'),
+    path('v2/', include('category.api.routers'), name='test_api_v2'),
     # API 
     path('single/<int:pk>/', CategoryDetail.as_view(), name='test_api_sing'),
     path('list/', CategoryListCreateAPIView.as_view(), name='test_api'),
