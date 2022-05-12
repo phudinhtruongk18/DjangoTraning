@@ -1,7 +1,7 @@
 const contentContainer = document.getElementById('content-container')
 const loginForm = document.getElementById('login-form')
 const searchForm = document.getElementById('search-form')
-const baseEndpoint = "http://localhost:8000/api"
+const baseEndpoint = "http://localhost:8000"
 if (loginForm) {
     // handle this login form
     loginForm.addEventListener('submit', handleLogin)
@@ -13,7 +13,7 @@ if (searchForm) {
 
 function handleLogin(event) {
     event.preventDefault()
-    const loginEndpoint = `${baseEndpoint}/token/`
+    const loginEndpoint = `${baseEndpoint}/auth_macdinh/`
     let loginFormData = new FormData(loginForm)
     let loginObjectData = Object.fromEntries(loginFormData)
     let bodyStr = JSON.stringify(loginObjectData)
@@ -29,6 +29,7 @@ function handleLogin(event) {
         return response.json()
     })
     .then(authData => {
+        console.log('authData', authData)
         handleAuthData(authData, getProductList)
     })
     .catch(err=> {
@@ -134,7 +135,7 @@ function validateJWTToken() {
 }
 
 function getProductList(){
-    const endpoint = `${baseEndpoint}/products/`
+    const endpoint = `${baseEndpoint}/category/api/list/`
     const options = getFetchOptions()
     fetch(endpoint, options)
     .then(response=>{
@@ -150,5 +151,3 @@ function getProductList(){
 }
 
 validateJWTToken()
-// getProductList()
-

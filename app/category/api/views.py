@@ -14,6 +14,10 @@ from rest_framework import generics
 from rest_framework import permissions
 from rest_framework import authentication
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from django.db.models import Count
+from .serializers import ReportCategorySerializer
 
 # -------------------- SINGLE --------------------
 
@@ -37,6 +41,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 # -------------------- LIST --------------------
 
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import PermissionDenied
 
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
@@ -45,6 +50,18 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # get token
-        user = Token.objects.get(key=self.request.POST['token']).user
+        # user = Token.objects.get(key=self.request.POST['token']).user
+        # if anonymous user, return error
+        user = self.request.user
+        if user.is_anonymous:
+            raise PermissionDenied("No permission to create category")
+
         serializer.save(owner=user)
         return super().perform_create(serializer)
+
+# simple function view to get all categories and its num of product
+@api_view(['GET'])
+def products_quantity_per_category(request):
+    categories = Category.objects.annotate(num_products=Count('product')).order_by('-num_products')
+    serializer = ReportCategorySerializer(categories, many=True,context={'request': request})
+    return Response(serializer.data)

@@ -109,5 +109,13 @@ indexes = [
         ]
  tìm kiếm theo cây nhị phân, chia tên thành các node
  
- cd client_test
- python -m http.server 6969
+cd client_test
+python -m http.server 6969
+
+git pull
+git push
+commit
+rebase
+stash
+
+như trong serializer có thêm create, save, vallidate function nữa á

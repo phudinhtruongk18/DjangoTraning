@@ -14,13 +14,28 @@ class ShortCategorySerializer(serializers.ModelSerializer):
     name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     views_count = serializers.SerializerMethodField(read_only=True)
-
+            
     class Meta:
         model = Category
         fields = ('url', 'name','date_added','image','views_count')
 
     def get_views_count(self, obj):
         return obj.hit_count.hits
+
+
+class ReportCategorySerializer(ShortCategorySerializer):
+    "Report Category With num of book Serializer"
+    num_products = serializers.SerializerMethodField()
+
+    def get_num_products(self, obj):
+        try:
+            return obj.num_products
+        except Exception:
+            return None
+            
+    class Meta:
+        model = Category
+        fields = ('name', 'views_count', 'num_products')
 
 
 class CategorySerializer(ShortCategorySerializer):

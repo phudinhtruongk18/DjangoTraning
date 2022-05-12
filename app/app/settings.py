@@ -251,9 +251,9 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
 REST_FRAMEWORK = {       
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
         'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
         'drf_social_oauth2.authentication.SocialAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
     ),
     # my custom default settings
     'DEFAULT_PAGINATION_CLASS': 'app.my_pagination.SmallResultsSetPagination',

@@ -14,6 +14,7 @@ from rest_framework import authentication
 from product.models import Product,Photo
 from .serializers import ProductSerializer,PhotoSerializer
 from .short_serializers import ShortProductSerializer
+from .serializers import ReportProductSerializer,CommentProductSerializer
 
 class IsProductOwnerOrReadOnly(permissions.BasePermission):
     """
@@ -69,3 +70,15 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         user = Token.objects.get(key=self.request.POST['token']).user
         serializer.save(owner=user)
         return super().perform_create(serializer)
+
+
+class ReportProductListAPIView(generics.ListCreateAPIView):
+    pagination_class = None
+    queryset = Product.objects.all()
+    serializer_class = ReportProductSerializer
+
+
+class CommentProductListAPIView(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = CommentProductSerializer
+

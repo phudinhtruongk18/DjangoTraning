@@ -42,3 +42,18 @@ class ProductSerializer(ShortProductSerializer):
         request = self.context.get('request')
         thumb_url = obj.thumb
         return request.build_absolute_uri(thumb_url)
+
+
+class ReportProductSerializer(ShortProductSerializer):
+
+    class Meta:
+        model = Product
+        fields = ('name', 'views_count')
+        
+class CommentProductSerializer(ShortProductSerializer):
+    comments = CommentSerializer(source="comment_set", read_only=True,many=True)
+    
+    class Meta:
+        model = Product
+        fields = ('name', 'comments')
+        

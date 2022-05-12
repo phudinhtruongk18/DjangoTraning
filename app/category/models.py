@@ -24,7 +24,7 @@ class CategoryQuerySet(models.QuerySet):
         return self.filter(owner__isnull=False)
 
     def search(self, query,owner=None):
-        lookup = (Q(name__icontains=query) | Q(date_added__icontains=query))
+        lookup = (Q(slug__icontains=query))
         qs = self.is_have_owner().filter(lookup)
         if owner is not None:
             qs2 = qs.filter(owner=owner)
