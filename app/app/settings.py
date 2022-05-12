@@ -83,6 +83,9 @@ INSTALLED_APPS = [
     'healchecker',
 
     # -----------API REST-------------------
+    
+    # -----------Swagger-------------------
+   'drf_yasg',
 
 ]
 

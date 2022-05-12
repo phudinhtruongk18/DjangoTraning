@@ -42,7 +42,7 @@ class CategorySerializer(ShortCategorySerializer):
     owner = serializers.SerializerMethodField('_owner',validators=[validate_owner],read_only=True)
     parent = serializers.SerializerMethodField()
     slug = serializers.CharField(read_only=True)
-    products = ShortProductSerializer(source="product_set", many=True)
+    products = ShortProductSerializer(source="product_set", many=True,read_only=True)
 
     class Meta:
         model = Category

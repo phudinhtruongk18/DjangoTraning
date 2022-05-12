@@ -28,7 +28,7 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
 
 from rest_framework.authtoken.models import Token
 
-class CommentListCreateAPIView(generics.ListCreateAPIView):
+class CommentListCreateAPIView(generics.CreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer

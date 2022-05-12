@@ -22,6 +22,24 @@ from category.views import CategoryListView
 
 from rest_framework.authtoken.views import obtain_auth_token
 
+
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Aram Catalog API",
+      default_version='v1',
+      description="HDWEBSOFT",
+      terms_of_service="https://www.aramtool.com",
+      contact=openapi.Contact(email="phudinhtruongk18@gmail.com"),
+      license=openapi.License(name="Nike License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('me/', include("user.urls")),
@@ -39,6 +57,11 @@ urlpatterns = [
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
     path('auth_macdinh/', obtain_auth_token),
     # auth wit api
+
+    # swagger
+    path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
 if settings.DEBUG:
