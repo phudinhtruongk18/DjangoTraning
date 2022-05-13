@@ -83,11 +83,17 @@ INSTALLED_APPS = [
     'healchecker',
 
     # -----------API REST-------------------
-    
     # -----------Swagger-------------------
    'drf_yasg',
-
 ]
+
+
+# -----------DEBUG-------------------
+if DEBUG:
+    INSTALLED_APPS += [
+        'debug_toolbar',
+    ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -98,9 +104,26 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
     'social_django.middleware.SocialAuthExceptionMiddleware',  # <--
+
 ]
+if DEBUG:
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ]
+
+    # INTERNAL_IPS = [
+    #     'localhost',
+    #     'localhost:8000',
+    #     '42.113.187.70',
+    #     '192.168.1.17',
+    #     '0.0.0.0',
+    # ]
+    
+    import socket  # only if you haven't already imported this
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+    
 
 ROOT_URLCONF = 'app.urls'
 
@@ -209,27 +232,24 @@ REDIS_URL = "redis://redis:6379/0"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_HOST_USER = 'caythuearam2@gmail.com'
-EMAIL_HOST_PASSWORD = 'matkhaula1'
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "wrongpass1")
 EMAIL_PORT = 587
 # # </========== CONGIFGURE EMAIL ===========>
 
 SITE_ID = 1
 
+import rest_framework.authentication
 # # <=========== CONGIFGURE AUTH ===========>
-AUTHENTICATION_BACKENDS = (
-    'social_core.backends.google.GoogleOAuth2',
-    'django.contrib.auth.backends.ModelBackend',
-    'drf_social_oauth2.backends.DjangoOAuth2',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+#     'social_core.backends.google.GoogleOAuth2',
+#     # 'drf_social_oauth2.backends.DjangoOAuth2',
+# )
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '897327147963-57bk3t7jdkf3o6e25ff8j5srfqlasjjr.apps.googleusercontent.com'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
 
 AUTH_USER_MODEL = 'user.NomalUser'
-
-# LOGIN_URL = 'login'
-# LOGOUT_URL = 'logout'
-# LOGIN_REDIRECT_URL = 'dashboard'
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'dashboard'
@@ -255,16 +275,19 @@ REST_FRAMEWORK = {
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
-        'drf_social_oauth2.authentication.SocialAuthentication',
+
+        # 'oauth2_provider.contrib.rest_framework.OAuth2Authentication',  # django-oauth-toolkit >= 1.0.0
+        # 'drf_social_oauth2.authentication.SocialAuthentication',
     ),
     # my custom default settings
     'DEFAULT_PAGINATION_CLASS': 'app.my_pagination.SmallResultsSetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
         'app.my_permissions.IsOwnerOrReadOnly',
     ),
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',
+    # ),
     # throttlleing (https://www.django-rest-framework.org/api-guide/throttling/) use nginx to do this instead of django
-    
 
 }
 

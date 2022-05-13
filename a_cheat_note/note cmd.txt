@@ -119,3 +119,9 @@ rebase
 stash
 
 như trong serializer có thêm create, save, vallidate function nữa á
+
+
+
+SIMPLE JWT
+
+drf_social_oauth2

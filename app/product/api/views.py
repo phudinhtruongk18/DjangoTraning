@@ -72,7 +72,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         return super().perform_create(serializer)
 
 
-class ReportProductListAPIView(generics.ListCreateAPIView):
+class ReportProductListAPIView(generics.ListAPIView):
     pagination_class = None
     queryset = Product.objects.all()
     serializer_class = ReportProductSerializer

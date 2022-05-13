@@ -43,16 +43,23 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 from rest_framework.authtoken.models import Token
 from rest_framework.exceptions import PermissionDenied
 
+from rest_framework.authentication import TokenAuthentication
+
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Category.objects.all()
     serializer_class = ShortCategorySerializer
+    authentication_classes = (TokenAuthentication,)
 
     def perform_create(self, serializer):
         # get token
-        # user = Token.objects.get(key=self.request.POST['token']).user
+
+        user = Token.objects.get(key=self.request.POST['token']).user
         # if anonymous user, return error
-        user = self.request.user
+
+        # print(self.request.user)
+        # user = self.request.user
+
         if user.is_anonymous:
             raise PermissionDenied("No permission to create category")
 
