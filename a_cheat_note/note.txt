@@ -10,3 +10,6 @@ chery task
 todo:
 	ít view
 	nhiều model? (sử dụng khóa ở model? create? create? by user?)
+
+another note from web
+thu bay mau chay ve tym
