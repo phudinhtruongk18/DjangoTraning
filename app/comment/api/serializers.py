@@ -4,7 +4,7 @@ from comment.my_validators import validate_owner
 
 class CommentSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(
-        view_name='cmt_test_api_sing',
+        view_name='comment_detail',
         lookup_field='pk'
     )
 

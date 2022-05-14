@@ -12,7 +12,7 @@ from category.api.serializers import ShortCategorySerializer
 from .short_serializers import ShortProductSerializer
 
 class PhotoSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='pro_photo', lookup_field='pk')
+    url = serializers.HyperlinkedIdentityField(view_name='product_photo', lookup_field='pk')
     product = ShortProductSerializer(write_only=True)
     
     class Meta:

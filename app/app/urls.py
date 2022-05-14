@@ -18,7 +18,6 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 
-from rest_framework.authtoken.views import obtain_auth_token
 
 from category.views import CategoryListView
 
@@ -45,25 +44,24 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('me/', include("user.urls")),
 
+    # DRF
+    path('search/', include("search.urls")),
+
     # CATALOG AND PRODUCT URL
     path('', CategoryListView.as_view(), name='category'),
     path('category/', include("category.urls")),
     path('product/', include("product.urls")),
     path('comment/', include("comment.urls")),
 
-    path('api/search/', include("search.api.urls")),
-
-    # OAuth
-    path('', include('social_django.urls', namespace='social')),
-    path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
-
-    # simple token 
-    path('auth_macdinh/', obtain_auth_token),
-
     # swagger
     path('swagger.json', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+
+
+    # OAuth
+    path('', include('social_django.urls', namespace='social')),
+    path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
 ]
 
 import debug_toolbar
@@ -77,4 +75,5 @@ if settings.DEBUG:
         settings.MEDIA_URL,
         document_root=settings.MEDIA_ROOT,
     )
+    
 # else (production case) will be handled by nginx

@@ -13,8 +13,6 @@ urlpatterns = [
     path('add/', add_category, name='add_category'),
     path('edit/<int:category_id>/', edit_category, name='edit_category'),
     path('delete/<int:pk>/', CategoryDeleteView.as_view(), name='delete_category'),
-
+    
     path('api/', include("category.api.urls")),
-
-
 ]

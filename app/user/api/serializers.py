@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import NomalUser
+from user.models import NomalUser
 
 class MyUserSerializer(serializers.ModelSerializer):
     """

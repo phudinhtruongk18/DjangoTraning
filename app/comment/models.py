@@ -1,11 +1,11 @@
 from django.db import models
 from product.models import Product
 from user.models import NomalUser
-
+from .my_validators import validate_owner
 
 class Comment(models.Model):
     """Only allow user can have one comment for a product"""
-    owner = models.ForeignKey(NomalUser, on_delete=models.CASCADE)
+    owner = models.ForeignKey(NomalUser, on_delete=models.CASCADE,validators=[validate_owner])
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     content = models.TextField(max_length=500, blank=True)
     ip = models.CharField(max_length=20, blank=True)

@@ -12,5 +12,6 @@ urlpatterns = [
     path('delete/<int:product_id>', delete_product, name='delete_product'),
 
     path('delete_photo/<int:photo_id>', delete_photo, name='delete_photo'),
+
     path('api/', include("product.api.urls")),
 ]

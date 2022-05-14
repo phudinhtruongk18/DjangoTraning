@@ -5,7 +5,7 @@ from product.models import Product
 
 
 class ShortProductSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='pro_test_api_sing', lookup_field='pk')
+    url = serializers.HyperlinkedIdentityField(view_name='product_detail', lookup_field='pk')
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
     views_count = serializers.SerializerMethodField(read_only=True)

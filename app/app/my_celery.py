@@ -18,7 +18,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 @app.on_after_configure.connect
 def setup_periodic_tasks(sender, **kwargs):
     from healchecker.healcheck import heal_check_pro
-    from user.celery_task import report_user_daily
+    from mail.worker import report_user_daily
 
     @app.task
     def daily_task():
@@ -48,6 +48,29 @@ app.autodiscover_tasks()
 # def add(x, y):
 #     z = x + y
 #     print(z)
+
+from celery import shared_task
+from django.core.mail import EmailMessage
+from app.settings import EMAIL_HOST_USER
+from django.template.loader import render_to_string 
+
+@shared_task(name="Mail new kid")
+def send_mai_to_kid(created,current_site,email,domain,uid,token):
+    if created:
+        print("Send email to", email)
+        mail_subject = 'Activate your Aram Account'
+        text_message = render_to_string('user/active_email.html', {
+            'user': email,
+            'current_site' : current_site,
+            'domain': domain,
+            'uid': uid,
+            'token': token,
+        })
+
+        message = EmailMessage(mail_subject, text_message, EMAIL_HOST_USER, [email])
+        message.send()
+    else:
+        print(email, "was just saved")
 
 if __name__ == '__main__':
     # print(app)

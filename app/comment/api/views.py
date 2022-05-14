@@ -8,12 +8,12 @@ CRUD product:
 - delete when owner or admin
 """
 from rest_framework import generics
-from rest_framework import permissions
 from rest_framework import authentication
 
 from comment.models import Comment
 from .serializers import CommentSerializer
 
+from rest_framework.authtoken.models import Token
 
 # -------------------- SINGLE --------------------
 
@@ -24,9 +24,6 @@ class CommentDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
     lookup_field = 'pk'
 
-# -------------------- LIST --------------------
-
-from rest_framework.authtoken.models import Token
 
 class CommentListCreateAPIView(generics.CreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]

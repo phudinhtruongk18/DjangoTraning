@@ -8,28 +8,17 @@ CRUD product:
 - delete when owner or admin
 """
 from rest_framework import generics
-from rest_framework import permissions
 from rest_framework import authentication
 
 from product.models import Product,Photo
+from product.my_permissions import IsProductOwnerOrReadOnly
+
 from .serializers import ProductSerializer,PhotoSerializer
 from .short_serializers import ShortProductSerializer
 from .serializers import ReportProductSerializer,CommentProductSerializer
+from rest_framework.authtoken.models import Token
 
-class IsProductOwnerOrReadOnly(permissions.BasePermission):
-    """
-    Special permission for photo api
-    """
 
-    def has_object_permission(self, request, view, obj):
-        # Read permissions are allowed to any request,
-        # so we'll always allow GET, HEAD or OPTIONS requests.
-        if request.method in permissions.SAFE_METHODS:
-            return True
-
-        # Instance must have an attribute named `owner`.
-        return obj.product.owner == request.user
-        
 class PhotoDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsProductOwnerOrReadOnly]
 
@@ -38,6 +27,7 @@ class PhotoDetail(generics.RetrieveUpdateDestroyAPIView):
     lookup_field = 'pk'
 
 # -------------------- SINGLE --------------------
+
 
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = [permissions.DjangoObjectPermissions]
@@ -58,7 +48,6 @@ class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
 
 # -------------------- LIST --------------------
 
-from rest_framework.authtoken.models import Token
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     # permission_classes = [permissions.IsAuthenticatedOrReadOnly]

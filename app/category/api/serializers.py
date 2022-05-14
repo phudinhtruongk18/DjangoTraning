@@ -9,8 +9,9 @@ from category.models import Category
 
 from product.api.short_serializers import ShortProductSerializer
 
+
 class ShortCategorySerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='category:test_api_sing', lookup_field='pk')
+    url = serializers.HyperlinkedIdentityField(view_name='category:my_category', lookup_field='pk')
     name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     views_count = serializers.SerializerMethodField(read_only=True)
@@ -46,18 +47,13 @@ class CategorySerializer(ShortCategorySerializer):
 
     class Meta:
         model = Category
-        # fields = ('current_user','user', 'parent','slug', 'name', 'date_added', 'image', 'views_count')
         fields = ('url','owner', 'parent','slug', 'name', 'date_added', 'image', 'views_count','products')
-
-    # def get_image_url(self, obj):
-    #     return obj.image.url
 
     def get_parent(self, obj):
         if obj.parent:
             return obj.parent.name
         return None
 
-    #    # Use this method for the custom field
     def _owner(self, obj):
         if obj.owner:
             return obj.owner.username

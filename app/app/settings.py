@@ -79,10 +79,10 @@ INSTALLED_APPS = [
     'mail',
 
     'search', 
+
     # -----------HEAL-------------------
     'healchecker',
 
-    # -----------API REST-------------------
     # -----------Swagger-------------------
    'drf_yasg',
 ]

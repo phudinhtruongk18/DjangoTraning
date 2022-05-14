@@ -72,3 +72,4 @@ def products_quantity_per_category(request):
     categories = Category.objects.annotate(num_products=Count('product')).order_by('-num_products')
     serializer = ReportCategorySerializer(categories, many=True,context={'request': request})
     return Response(serializer.data)
+    

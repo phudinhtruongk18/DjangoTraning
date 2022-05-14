@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-from healchecker.tasks import send_mai_to_kid
+from app.my_celery import send_mai_to_kid
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.models import Site
 from django.utils.http import urlsafe_base64_encode
