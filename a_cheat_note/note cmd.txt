@@ -123,5 +123,11 @@ như trong serializer có thêm create, save, vallidate function nữa á
 
 
 SIMPLE JWT
-
+or
 drf_social_oauth2
+
+refactor api url
+config swagger
+atomic transaction
+
+add not exist categories
