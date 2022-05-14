@@ -133,3 +133,5 @@ atomic transaction
 add not exist categories
 
 tui chinh sua o nhanh main master 
+
+tui add lung tung o nhanh category
