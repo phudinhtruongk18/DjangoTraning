@@ -112,6 +112,10 @@ indexes = [
 cd client_test
 python -m http.server 6969
 
+
+git checkout -b "thanhcua"
+git branch -D thanhcua
+
 git pull
 git push
 commit
