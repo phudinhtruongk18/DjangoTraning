@@ -136,19 +136,3 @@ atomic transaction
 
 add not exist categories
 
-
-tui add lung tung o nhanh category
-tui add lung tung o nhanh category
-
-mot hom no tui thich them 1 dong cho vui
- jscode to hack nasa
- var hacknana = true;
- for tmp in hack: prin ahsdasdasd
- 
- xin chao tui la commit den tu web
-
-
-what is thanh cua?
-Thanh cua hay thịt giả cua hoặc que hải sản là một loại món ăn hải sản 
-làm từ tinh bột và cá trắng nghiền mịn đã được chế biến để có hương vị 
-giống với thịt chân của cua tuyết hoặc cua nhện Nhật Bản.
