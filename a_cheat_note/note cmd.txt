@@ -132,6 +132,6 @@ atomic transaction
 
 add not exist categories
 
-
-tui add lung tung o nhanh category
-tui add lung tung o nhanh category
+git rebase --continue
+git add/rm <conflicted_files>
+git push --force origin add-category-feature
