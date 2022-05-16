@@ -1,15 +1,13 @@
-nghĩ ra đề tài môi trường
 
+done
+parent of category (api create) 
+categories of product (api create)
+
+plan
+photos  of product (api create) 
+check middle ware to get user
 retry task
 too long (time_out)
 
-re src naming
 atomic quẻy
 chery task
-
-todo:
-	ít view
-	nhiều model? (sử dụng khóa ở model? create? create? by user?)
-
-another note from web
-thu bay mau chay ve tym

@@ -10,13 +10,16 @@ CRUD product:
 from rest_framework import generics
 from rest_framework import authentication
 
-from product.models import Product,Photo
+from product.models import Product,Photo,Category
 from product.my_permissions import IsProductOwnerOrReadOnly
 
 from .serializers import ProductSerializer,PhotoSerializer
 from .short_serializers import ShortProductSerializer
 from .serializers import ReportProductSerializer,CommentProductSerializer
 from rest_framework.authtoken.models import Token
+
+from rest_framework.validators import ValidationError
+from rest_framework.exceptions import PermissionDenied
 
 
 class PhotoDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -48,16 +51,39 @@ class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
 
 # -------------------- LIST --------------------
 
+from rest_framework.authentication import TokenAuthentication
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     queryset = Product.objects.all()
     serializer_class = ShortProductSerializer
+    authentication_classes = (TokenAuthentication,)
 
     def perform_create(self, serializer):
         # get token
+        print(self.request.POST,"<-")
+        if 'token' not in self.request.POST:
+            raise PermissionDenied({"token":"Not found"})
+
         user = Token.objects.get(key=self.request.POST['token']).user
-        serializer.save(owner=user)
+
+        if user.is_anonymous:
+            raise PermissionDenied({"token":"No permission to create category"})
+
+        categories_of_product = []
+        categories = self.request.POST.getlist('categories')
+        # print('->',categories)
+        for category in categories:
+            # print(category)
+            try:
+                pk_pro = int(category)
+                print("->",pk_pro)
+                category_obj = Category.objects.get(pk=pk_pro)
+                categories_of_product.append(category_obj)
+            except Category.DoesNotExist:
+                raise ValidationError({'categories': 'Category with pk:'+str(category)+' does not exist'})
+
+        serializer.save(owner=user,categories=categories_of_product)
+            
         return super().perform_create(serializer)
 
 

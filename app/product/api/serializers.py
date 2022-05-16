@@ -23,7 +23,6 @@ class ProductSerializer(ShortProductSerializer):
     "Same to ShortProductSerializer but change category method to serializer"
     owner = serializers.SerializerMethodField('_owner',validators=[validate_owner],read_only=True)
     slug = serializers.CharField(read_only=True)
-    categories = ShortCategorySerializer(many=True)
     photos = PhotoSerializer(source="photo_set",many=True, read_only=True)
     comments = CommentSerializer(source="comment_set", read_only=True,many=True)
     thumb = serializers.SerializerMethodField(read_only=True)
@@ -41,7 +40,7 @@ class ProductSerializer(ShortProductSerializer):
     def get_thumb(self, obj):
         request = self.context.get('request')
         thumb_url = obj.thumb
-        return request.build_absolute_uri(thumb_url)
+        return thumb_url
 
 
 class ReportProductSerializer(ShortProductSerializer):
@@ -50,10 +49,10 @@ class ReportProductSerializer(ShortProductSerializer):
         model = Product
         fields = ('name', 'views_count')
         
+        
 class CommentProductSerializer(ShortProductSerializer):
     comments = CommentSerializer(source="comment_set", read_only=True,many=True)
     
     class Meta:
         model = Product
         fields = ('name', 'comments')
-        

@@ -7,6 +7,7 @@ CRUD category:
 - edit when owner or admin
 - delete when owner or admin
 """
+from rest_framework.validators import ValidationError
 from category.models import Category
 from .serializers import CategorySerializer,ShortCategorySerializer
 from rest_framework import generics
@@ -53,17 +54,30 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # get token
+        if 'token' not in self.request.POST:
+            raise PermissionDenied({"token":"Not found"})
 
         user = Token.objects.get(key=self.request.POST['token']).user
+        if user.is_anonymous:
+            raise PermissionDenied({"token":"No permission to create category"})
+
+        parent = None
+        if 'parent' in self.request.POST:
+            try:
+                parent = Category.objects.get(pk=int(self.request.POST['parent']))
+            except Category.DoesNotExist:
+                # raise
+                raise ValidationError({'parent':'Parent category not found'})
+
+        # print(type(parent))
         # if anonymous user, return error
 
+        
         # print(self.request.user)
         # user = self.request.user
 
-        if user.is_anonymous:
-            raise PermissionDenied("No permission to create category")
 
-        serializer.save(owner=user)
+        serializer.save(owner=user,parent=parent)
         return super().perform_create(serializer)
 
 # simple function view to get all categories and its num of product

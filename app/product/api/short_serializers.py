@@ -9,7 +9,7 @@ class ShortProductSerializer(serializers.ModelSerializer):
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
     views_count = serializers.SerializerMethodField(read_only=True)
-    categories = serializers.SerializerMethodField(read_only=True)
+    categories = serializers.SerializerMethodField()
     
     class Meta:
         model = Product

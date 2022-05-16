@@ -11,17 +11,26 @@ from product.api.short_serializers import ShortProductSerializer
 
 
 class ShortCategorySerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='category:my_category', lookup_field='pk')
+    owner = serializers.SerializerMethodField('_owner',validators=[validate_owner],read_only=True)
+    url = serializers.HyperlinkedIdentityField(view_name='category:my_category', lookup_field='pk',read_only=True)
     name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     views_count = serializers.SerializerMethodField(read_only=True)
-            
+    parent = serializers.CharField(required=False,read_only=True)
+
     class Meta:
         model = Category
-        fields = ('url', 'name','date_added','image','views_count')
+        fields = ('owner','url', 'name','date_added','image','views_count','parent')
+        
 
     def get_views_count(self, obj):
         return obj.hit_count.hits
+    
+    def _owner(self, obj):
+        if obj.owner:
+            return obj.owner.full_name()
+        return None
+
 
 
 class ReportCategorySerializer(ShortCategorySerializer):
@@ -40,7 +49,7 @@ class ReportCategorySerializer(ShortCategorySerializer):
 
 
 class CategorySerializer(ShortCategorySerializer):
-    owner = serializers.SerializerMethodField('_owner',validators=[validate_owner],read_only=True)
+    owner = serializers.SerializerMethodField('_owner',validators=[validate_owner])
     parent = serializers.SerializerMethodField()
     slug = serializers.CharField(read_only=True)
     products = ShortProductSerializer(source="product_set", many=True,read_only=True)
@@ -52,9 +61,4 @@ class CategorySerializer(ShortCategorySerializer):
     def get_parent(self, obj):
         if obj.parent:
             return obj.parent.name
-        return None
-
-    def _owner(self, obj):
-        if obj.owner:
-            return obj.owner.username
         return None
