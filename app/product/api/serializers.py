@@ -11,17 +11,18 @@ from category.api.serializers import ShortCategorySerializer
 
 from .short_serializers import ShortProductSerializer
 
+
 class PhotoSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='product_photo', lookup_field='pk')
+    url = serializers.HyperlinkedIdentityField(view_name='product_photo', lookup_field='pk',read_only=True)
     product = ShortProductSerializer(write_only=True)
     
     class Meta:
         model = Photo
         fields = ('url','image', 'product')
 
+
 class ProductSerializer(ShortProductSerializer):
     "Same to ShortProductSerializer but change category method to serializer"
-    owner = serializers.SerializerMethodField('_owner',validators=[validate_owner],read_only=True)
     slug = serializers.CharField(read_only=True)
     photos = PhotoSerializer(source="photo_set",many=True, read_only=True)
     comments = CommentSerializer(source="comment_set", read_only=True,many=True)

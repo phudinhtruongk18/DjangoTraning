@@ -55,7 +55,7 @@ class Product(models.Model,HitCountMixin):
             return photo.thumbnail.url
             # return photo.image.url
         except Exception as e:
-            print("Log photo:",e)
+            # print("Log photo:",e)
             return ''
 
 

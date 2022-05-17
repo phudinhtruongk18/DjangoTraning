@@ -82,9 +82,14 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
             except Category.DoesNotExist:
                 raise ValidationError({'categories': 'Category with pk:'+str(category)+' does not exist'})
 
-        serializer.save(owner=user,categories=categories_of_product)
-            
-        return super().perform_create(serializer)
+
+        product = serializer.save(owner=user,categories=categories_of_product)
+        # instance
+
+        for photo in self.request.FILES.getlist('photos'):
+            Photo.objects.create(image=photo,product=product)
+
+        # return super().perform_create(serializer)
 
 
 class ReportProductListAPIView(generics.ListAPIView):

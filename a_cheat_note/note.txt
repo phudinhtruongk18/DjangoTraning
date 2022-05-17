@@ -2,9 +2,10 @@
 done
 parent of category (api create) 
 categories of product (api create)
+photos  of product (api create)  (slow)
 
 plan
-photos  of product (api create) 
+check and optimize query
 check middle ware to get user
 retry task
 too long (time_out)

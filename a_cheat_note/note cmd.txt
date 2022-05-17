@@ -25,6 +25,16 @@ cmd:
 % tam thoi bo dong nay o db
 restart: always
 
+{
+python manage.py makemigrations user &&
+python manage.py makemigrations category &&
+python manage.py makemigrations product &&
+python manage.py makemigrations comment &&
+python manage.py makemigrations healchecker &&
+python manage.py makemigrations mail &&
+}
+
+do this in cmd in celery compose
 
 % tam thoi bo dong nay o db
 # RUN apk update && apk add libpq
