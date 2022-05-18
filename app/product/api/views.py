@@ -89,7 +89,7 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
         for photo in self.request.FILES.getlist('photos'):
             Photo.objects.create(image=photo,product=product)
 
-        # return super().perform_create(serializer)
+        return super().perform_create(serializer)
 
 
 class ReportProductListAPIView(generics.ListAPIView):

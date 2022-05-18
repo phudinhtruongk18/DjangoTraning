@@ -62,6 +62,8 @@ services:
       - EMAIL_HOST_USER=caythuearam2@gmail.com
       - EMAIL_HOST_PASSWORD=matkhaula1
       - EMAIL_PORT=587
+      - SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=897327147963-57bk3t7jdkf3o6e25ff8j5srfqlasjjr.apps.googleusercontent.com
+      - SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=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
 
       - CELERY_BROKER=redis://redis:6379/0
       - CELERY_BACKEND=redis://redis:6379/0

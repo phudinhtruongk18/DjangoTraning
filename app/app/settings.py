@@ -84,15 +84,8 @@ INSTALLED_APPS = [
     'healchecker',
 
     # -----------Swagger-------------------
-   'drf_yasg',
+    'drf_yasg',
 ]
-
-
-# -----------DEBUG-------------------
-if DEBUG:
-    INSTALLED_APPS += [
-        'debug_toolbar',
-    ]
 
 
 MIDDLEWARE = [
@@ -107,23 +100,7 @@ MIDDLEWARE = [
     'social_django.middleware.SocialAuthExceptionMiddleware',  # <--
     # need middleware
 ]
-if DEBUG:
-    MIDDLEWARE += [
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    ]
 
-    # INTERNAL_IPS = [
-    #     'localhost',
-    #     'localhost:8000',
-    #     '42.113.187.70',
-    #     '192.168.1.17',
-    #     '0.0.0.0',
-    # ]
-    
-    import socket  # only if you haven't already imported this
-    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
-    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
-    
 
 ROOT_URLCONF = 'app.urls'
 
@@ -202,13 +179,6 @@ STATIC_URL = '/static/static/'
 MEDIA_URL = '/static/media/'
 
 MEDIA_ROOT = '/vol/web/media'
-
-if DEBUG:
-    STATICFILES_DIRS = [
-        '/vol/web/static',
-    ]
-else:
-    STATIC_ROOT = '/vol/web/static'
     
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
@@ -231,31 +201,32 @@ REDIS_URL = "redis://redis:6379/0"
 # # <=========== CONGIFGURE EMAIL ===========>
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'caythuearam2@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "wrongpass1")
+EMAIL_HOST_USER = os.environ.get("EMAIL_HOST_USER", "email")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "emai_pass")
 EMAIL_PORT = 587
 # # </========== CONGIFGURE EMAIL ===========>
 
 SITE_ID = 1
 
-import rest_framework.authentication
-# # <=========== CONGIFGURE AUTH ===========>
-# AUTHENTICATION_BACKENDS = (
-#     'django.contrib.auth.backends.ModelBackend',
-#     'social_core.backends.google.GoogleOAuth2',
-#     # 'drf_social_oauth2.backends.DjangoOAuth2',
-# )
+# import rest_framework.authentication
+# # # <=========== CONGIFGURE AUTH ===========>
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'social_core.backends.google.GoogleOAuth2',
+    # 'drf_social_oauth2.backends.DjangoOAuth2',
+)
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '897327147963-57bk3t7jdkf3o6e25ff8j5srfqlasjjr.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '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'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY='897327147963-57bk3t7jdkf3o6e25ff8j5srfqlasjjr.apps.googleusercontent.com'
+# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET='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'
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_KEY", "ID")
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ.get("SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET", "SECRET KEY")
 
 AUTH_USER_MODEL = 'user.NomalUser'
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'dashboard'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
-
-SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:8000']
 
 # </========== CONGIFGURE AUTH ===========>
 
@@ -269,7 +240,6 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = [
     'https://www.googleapis.com/auth/userinfo.email',
     'https://www.googleapis.com/auth/userinfo.profile',
 ]
-
 
 REST_FRAMEWORK = {       
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
@@ -292,15 +262,6 @@ REST_FRAMEWORK = {
 }
 
 # allow ip and domain
-if DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        # react port
-        'http://localhost:3000',
-        # js test
-        'http://localhost:6969',
-    ]
-else:
-    print("real domain here")
 
 # set to vietnamese time zone
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
@@ -312,4 +273,42 @@ USE_TZ = True
 
 # # location
 # USE_L10N = True
+
+if DEBUG:
+    INSTALLED_APPS += [
+        'debug_toolbar',
+    ]
+
+    MIDDLEWARE += [
+        'debug_toolbar.middleware.DebugToolbarMiddleware',
+    ]
+
+    # INTERNAL_IPS = [
+    #     'localhost',
+    #     'localhost:8000',
+    #     '42.113.187.70',
+    #     '192.168.1.17',
+    #     '0.0.0.0',
+    # ]
+    
+    import socket  # only if you haven't already imported this
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+    
+    CORS_ALLOWED_ORIGINS = [
+        # react port
+        'http://localhost:3000',
+        # js test
+        'http://localhost:6969',
+    ]
+
+    STATICFILES_DIRS = [
+        '/vol/web/static',
+    ]
+
+    SOCIAL_AUTH_ALLOWED_REDIRECT_HOSTS = ['localhost:8000']
+else:
+    STATIC_ROOT = '/vol/web/static'
+    # REAL DOMAIN FOR CORS_ALLOWED_ORIGINS
+    print('PRODUCTION')
 
