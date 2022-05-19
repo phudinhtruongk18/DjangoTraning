@@ -21,6 +21,7 @@ from rest_framework.authtoken.models import Token
 from rest_framework.validators import ValidationError
 from rest_framework.exceptions import PermissionDenied
 
+from django.db import IntegrityError, transaction
 
 class PhotoDetail(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [IsProductOwnerOrReadOnly]
@@ -31,10 +32,14 @@ class PhotoDetail(generics.RetrieveUpdateDestroyAPIView):
 
 # -------------------- SINGLE --------------------
 
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.response import Response
 
 class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     # permission_classes = [permissions.DjangoObjectPermissions]
-    authentication = (authentication.TokenAuthentication,)
+    # authentication = (authentication.TokenAuthentication,)
+    authentication_classes = [TokenAuthentication]
+
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
@@ -43,11 +48,18 @@ class ProductDetail(generics.RetrieveUpdateDestroyAPIView):
     #     print(request.user.is_authenticated)
     #     return self.retrieve(request, *args, **kwargs)
 
-    # def delete(self, request, *args, **kwargs):
-    #     return self.destroy(request, *args, **kwargs)
+    # def get_queryset(self):
+    #     print(self.request.user)
+    #     return super().get_queryset()
 
-    # def put(self, request, *args, **kwargs):
-    #     return self.update(request, *args, **kwargs)
+    # def delete(self, request, *args, **kwargs):
+    #     product = self.get_object()
+    #     if product.owner != request.user:
+    #         raise PermissionDenied("You are not the owner of this product")
+        
+    #     return self.destroy(request, *args, **kwargs)
+    def perform_update(self, serializer):
+        serializer.save(owner=self.request.user)
 
 # -------------------- LIST --------------------
 
@@ -57,15 +69,12 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ShortProductSerializer
     authentication_classes = (TokenAuthentication,)
-
+    
     def perform_create(self, serializer):
         # get token
-        print(self.request.POST,"<-")
-        if 'token' not in self.request.POST:
-            raise PermissionDenied({"token":"Not found"})
-
-        user = Token.objects.get(key=self.request.POST['token']).user
-
+        # print(self.request.POST,"<-")
+        user = self.request.user
+        
         if user.is_anonymous:
             raise PermissionDenied({"token":"No permission to create category"})
 
@@ -76,20 +85,30 @@ class ProductListCreateAPIView(generics.ListCreateAPIView):
             # print(category)
             try:
                 pk_pro = int(category)
-                print("->",pk_pro)
+                # print("->",pk_pro)
                 category_obj = Category.objects.get(pk=pk_pro)
                 categories_of_product.append(category_obj)
             except Category.DoesNotExist:
+                # pass
                 raise ValidationError({'categories': 'Category with pk:'+str(category)+' does not exist'})
 
+        with transaction.atomic():
+            product = serializer.save(owner=user,categories=categories_of_product)
+            # serializer.save(owner=user,categories=categories_of_product)
+            # print(serializer)
+            # categories_of_product = Category.objects.get(pk=3)
 
-        product = serializer.save(owner=user,categories=categories_of_product)
-        # instance
+            # instance
+            try:
+                for photo in self.request.FILES.getlist('photos'):
+                    Photo.objects.create(image=photo,product=product)
+            except Exception as e:
+                print("IntegrityError", e)
+                raise ValidationError({'photos': 'Some photos are not uploaded'})
+                
+            serializer.save()
 
-        for photo in self.request.FILES.getlist('photos'):
-            Photo.objects.create(image=photo,product=product)
-
-        return super().perform_create(serializer)
+        # return super().perform_create(serializer)
 
 
 class ReportProductListAPIView(generics.ListAPIView):

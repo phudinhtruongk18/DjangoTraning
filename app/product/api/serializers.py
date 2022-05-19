@@ -31,12 +31,6 @@ class ProductSerializer(ShortProductSerializer):
     class Meta:
         model = Product
         fields = ('owner', 'date_added', 'slug', 'name', 'views_count','thumb','categories','photos', 'comments')
-
-    #    # Use this method for the custom field
-    def _owner(self, obj):
-        if obj.owner:
-            return obj.owner.username
-        return None
         
     def get_thumb(self, obj):
         request = self.context.get('request')

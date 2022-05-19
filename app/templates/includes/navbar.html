@@ -31,8 +31,16 @@
                         <img class="logo" src="{% static './images/logo.png' %}">
                     </a> <!-- brand-wrap.// -->
                 </div>
+                <a href="{% url 'schema-swagger-ui' %}">                        
+                    <button type="button" class="btn btn-info">
+                        </i>{% trans 'API' %}
+                    </button>
+                </a>
+
                 <div class="col-lg col-sm col-md col-6 flex-grow-0">
+
                     <div class="category-wrap dropdown d-inline-block float-right">
+
                         <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                             <i class="fa fa-bars"></i>{% trans 'Manage' %}
                         </button>

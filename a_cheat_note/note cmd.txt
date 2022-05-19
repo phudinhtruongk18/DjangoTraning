@@ -146,3 +146,12 @@ atomic transaction
 
 add not exist categories
 
+transaction can su dung khi nao can thiet (dat hang, tien bac, dang ki mon,may bay) -> vi can tinh toan ven
+
+sudung trong bai:
+    - edit (khi 2 nguoi dung cung sua 1 san pham)
+    - quantiny (add)
+nhuoc diem transaction: 
+    - su dung bo nho dem
+    - co kha nang deadlock (1 need 2, 2 need 1)
+

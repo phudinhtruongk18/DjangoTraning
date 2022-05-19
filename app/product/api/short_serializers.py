@@ -11,6 +11,7 @@ class TempPhotoSerializer(serializers.Serializer):
         fields = ('photo')
 
 class ShortProductSerializer(serializers.ModelSerializer):
+    owner = serializers.SerializerMethodField(read_only=True)
     url = serializers.HyperlinkedIdentityField(view_name='product_detail', lookup_field='pk')
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
@@ -21,6 +22,11 @@ class ShortProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('url','date_added', 'name', 'views_count', 'thumb','categories','photos')
+
+    def get_owner(self, obj):
+        if obj.owner:
+            return obj.owner.username
+        return None
 
     def get_views_count(self, obj):
         return obj.hit_count.hits

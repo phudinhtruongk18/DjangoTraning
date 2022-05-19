@@ -274,6 +274,8 @@ USE_TZ = True
 # # location
 # USE_L10N = True
 
+ATOMIC_REQUESTS = True
+
 if DEBUG:
     INSTALLED_APPS += [
         'debug_toolbar',
