@@ -98,15 +98,15 @@ def user_post_save_receiver(sender, instance, *args, **kwargs):
         instance.is_active = True
 
 
-@receiver(post_save, sender=NomalUser)
-def user_post_save_receiver(sender, instance, created, *args, **kwargs):
-    """
-    after saved in the database
-    """
-    print("user_post_save_receiver")
+# @receiver(post_save, sender=NomalUser)
+# def user_post_save_receiver(sender, instance, created, *args, **kwargs):
+#     """
+#     after saved in the database
+#     """
+#     print("user_post_save_receiver")
         
-    uid = urlsafe_base64_encode(force_bytes(instance.pk))
-    current_site = Site.objects.get_current()
-    token = default_token_generator.make_token(instance)
-    email = instance.email
-    send_mai_to_kid.delay(created,str(current_site), email,str(current_site.domain),uid,token)
+#     uid = urlsafe_base64_encode(force_bytes(instance.pk))
+#     current_site = Site.objects.get_current()
+#     token = default_token_generator.make_token(instance)
+#     email = instance.email
+#     send_mai_to_kid.delay(created,str(current_site), email,str(current_site.domain),uid,token)

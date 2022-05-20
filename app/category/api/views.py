@@ -29,6 +29,18 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CategorySerializer
     lookup_field = 'pk'
 
+    def perform_update(self, serializer):
+        lookup_data = {}
+        if 'parent' in self.request.POST:
+            try:
+                parent = Category.objects.get(pk=int(self.request.POST['parent']))
+            except Category.DoesNotExist:
+                # raise
+                raise ValidationError({'parent':'Parent category not found'})
+            lookup_data["parent"] = parent
+
+        serializer.save(**lookup_data)
+
     # def get(self, request, *args, **kwargs):
     #     print(request.user.is_authenticated)
     #     return self.retrieve(request, *args, **kwargs)
@@ -54,10 +66,7 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
 
     def perform_create(self, serializer):
         # get token
-        if 'token' not in self.request.POST:
-            raise PermissionDenied({"token":"Not found"})
-
-        user = Token.objects.get(key=self.request.POST['token']).user
+        user = self.request.user
         if user.is_anonymous:
             raise PermissionDenied({"token":"No permission to create category"})
 
@@ -69,17 +78,9 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
                 # raise
                 raise ValidationError({'parent':'Parent category not found'})
 
-        # print(type(parent))
-        # if anonymous user, return error
-
-        
-        # print(self.request.user)
-        # user = self.request.user
-
-
         serializer.save(owner=user,parent=parent)
         return super().perform_create(serializer)
-
+    
 # simple function view to get all categories and its num of product
 @api_view(['GET'])
 def products_quantity_per_category(request):

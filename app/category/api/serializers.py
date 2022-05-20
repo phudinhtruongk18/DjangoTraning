@@ -53,6 +53,7 @@ class CategorySerializer(ShortCategorySerializer):
     parent = serializers.SerializerMethodField()
     slug = serializers.CharField(read_only=True)
     products = ShortProductSerializer(source="product_set", many=True,read_only=True)
+    image = serializers.ImageField(required=False)
 
     class Meta:
         model = Category

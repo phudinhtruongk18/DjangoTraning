@@ -21,7 +21,7 @@ class ShortProductSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Product
-        fields = ('url','date_added', 'name', 'views_count', 'thumb','categories','photos')
+        fields = ('owner','url','date_added', 'name', 'views_count', 'thumb','categories','photos')
 
     def get_owner(self, obj):
         if obj.owner:

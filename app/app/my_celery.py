@@ -54,8 +54,9 @@ from django.core.mail import EmailMessage
 from app.settings import EMAIL_HOST_USER
 from django.template.loader import render_to_string 
 
-@shared_task(name="Mail new kid")
+@shared_task(name="Mail new kid",autoretry_for=(Exception,), retry_backoff=2)
 def send_mai_to_kid(created,current_site,email,domain,uid,token):
+    # autoretry_for=(Exception,), retry_backoff=2
     if created:
         print("Send email to", email)
         mail_subject = 'Activate your Aram Account'
