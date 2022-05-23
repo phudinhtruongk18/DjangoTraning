@@ -1,11 +1,11 @@
 from rest_framework import generics
 
 from category.models import Category
-from category.api.serializers import ShortCategorySerializer
+from category.api.serializers import CategorySerializer
 
 class SearchCategoryListView(generics.ListAPIView):
     queryset = Category.objects.all()
-    serializer_class = ShortCategorySerializer
+    serializer_class = CategorySerializer
 
     def get_queryset(self,*args,**kwargs):
         

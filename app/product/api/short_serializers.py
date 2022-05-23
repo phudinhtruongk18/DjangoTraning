@@ -5,6 +5,7 @@ from product.models import Product
 
 from category.models import Category
 
+
 class CategoryHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='category:my_category', lookup_field='pk',
                                                 read_only=True, format='html')
@@ -13,12 +14,11 @@ class CategoryHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
         model = Category
         fields = ['url', 'name']
 
-# temp serializer photo
-class TempPhotoSerializer(serializers.Serializer):
-    image = serializers.ImageField()
 
-    class Meta:
-        fields = ('image')
+class ProductListSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        categories = [Product(**item) for item in validated_data]
+        return Product.objects.bulk_create(categories)
 
 class CreateProductSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField(read_only=True)
@@ -39,13 +39,8 @@ class CreateProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('owner','url','date_added', 'name', 'views_count', 'thumb','categories')
-
-    # def validate(self, data):
-    # def create(self, validated_data):
-    #     categories = validated_data.pop('categories')
-    # def update(self, instance, validated_data):
-#         profile_data = validated_data.pop('profile')
-
+        list_serializer_class = ProductListSerializer
+        
     def get_owner(self, obj):
         if obj.owner:
             return obj.owner.username

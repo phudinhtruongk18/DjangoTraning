@@ -10,7 +10,17 @@ from category.models import Category
 from product.api.short_serializers import CreateProductSerializer
 
 
-class ShortCategorySerializer(serializers.ModelSerializer):
+class CategoryListSerializer(serializers.ListSerializer):
+    def to_representation(self, data):
+        data = data.annotate(num_products=Count('product'))
+        return super().to_representation(data)
+    
+    def create(self, validated_data):
+        categories = [Category(**item) for item in validated_data]
+        return Category.objects.bulk_create(categories)
+
+
+class CategorySerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField('_owner',validators=[validate_owner],read_only=True)
     url = serializers.HyperlinkedIdentityField(view_name='category:my_category', lookup_field='pk',read_only=True)
     name = serializers.CharField(required=True, validators=[unique_validator])
@@ -26,6 +36,7 @@ class ShortCategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ('owner','url', 'name','date_added','image','views_count','parent')
+        list_serializer_class = CategoryListSerializer
         
 
     def get_views_count(self, obj):
@@ -37,7 +48,7 @@ class ShortCategorySerializer(serializers.ModelSerializer):
         return None
 
 
-class ReportCategorySerializer(ShortCategorySerializer):
+class ReportCategorySerializer(CategorySerializer):
     "Report Category With num of book Serializer"
     num_products = serializers.SerializerMethodField()
 
@@ -52,7 +63,7 @@ class ReportCategorySerializer(ShortCategorySerializer):
         fields = ('name', 'views_count', 'num_products')
 
 
-class CategorySerializer(ShortCategorySerializer):
+class DetailCategorySerializer(CategorySerializer):
     owner = serializers.SerializerMethodField('_owner',validators=[validate_owner])
     parent = serializers.SerializerMethodField()
     slug = serializers.CharField(read_only=True)

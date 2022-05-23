@@ -15,7 +15,7 @@ from django.db.models import Count
 from rest_framework.authentication import TokenAuthentication
 
 from category.models import Category
-from .serializers import CategorySerializer,ShortCategorySerializer
+from .serializers import DetailCategorySerializer,CategorySerializer
 from .serializers import ReportCategorySerializer
 
 # -------------------- SINGLE --------------------
@@ -23,7 +23,7 @@ from .serializers import ReportCategorySerializer
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
     authentication = (TokenAuthentication,)
     queryset = Category.objects.all()
-    serializer_class = CategorySerializer
+    serializer_class = DetailCategorySerializer
     lookup_field = 'pk'
 
 # -------------------- LIST --------------------
@@ -32,7 +32,7 @@ class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     queryset = Category.objects.all()
-    serializer_class = ShortCategorySerializer
+    serializer_class = CategorySerializer
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

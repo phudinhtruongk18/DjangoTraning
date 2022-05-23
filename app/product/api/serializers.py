@@ -11,6 +11,12 @@ from comment.api.serializers import CommentSerializer
 from .short_serializers import CreateProductSerializer
 
 
+class PhotoListSerializer(serializers.ListSerializer):
+    def create(self, validated_data):
+        photos = [Photo(**item) for item in validated_data]
+        return Photo.objects.bulk_create(photos)
+
+
 class PhotoSerializer(serializers.ModelSerializer):
     url = serializers.HyperlinkedIdentityField(view_name='product_photo', lookup_field='pk',read_only=True)
     product = CreateProductSerializer(write_only=True)
@@ -18,6 +24,7 @@ class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Photo
         fields = ('url','image', 'product')
+        list_serializer_class = PhotoListSerializer
 
 
 class ProductSerializer(CreateProductSerializer):
