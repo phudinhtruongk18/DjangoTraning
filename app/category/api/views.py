@@ -7,79 +7,35 @@ CRUD category:
 - edit when owner or admin
 - delete when owner or admin
 """
-from rest_framework.validators import ValidationError
-from category.models import Category
-from .serializers import CategorySerializer,ShortCategorySerializer
 from rest_framework import generics
-
-from rest_framework import permissions
-from rest_framework import authentication
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.db.models import Count
+
+from rest_framework.authentication import TokenAuthentication
+
+from category.models import Category
+from .serializers import CategorySerializer,ShortCategorySerializer
 from .serializers import ReportCategorySerializer
 
 # -------------------- SINGLE --------------------
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
-    # permission_classes = [permissions.DjangoObjectPermissions]
-    authentication = (authentication.TokenAuthentication,)
+    authentication = (TokenAuthentication,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'pk'
 
-    def perform_update(self, serializer):
-        lookup_data = {}
-        if 'parent' in self.request.POST:
-            try:
-                parent = Category.objects.get(pk=int(self.request.POST['parent']))
-            except Category.DoesNotExist:
-                # raise
-                raise ValidationError({'parent':'Parent category not found'})
-            lookup_data["parent"] = parent
-
-        serializer.save(**lookup_data)
-
-    # def get(self, request, *args, **kwargs):
-    #     print(request.user.is_authenticated)
-    #     return self.retrieve(request, *args, **kwargs)
-
-    # def delete(self, request, *args, **kwargs):
-    #     return self.destroy(request, *args, **kwargs)
-
-    # def put(self, request, *args, **kwargs):
-    #     return self.update(request, *args, **kwargs)
-
 # -------------------- LIST --------------------
 
-from rest_framework.authtoken.models import Token
-from rest_framework.exceptions import PermissionDenied
-
-from rest_framework.authentication import TokenAuthentication
 
 class CategoryListCreateAPIView(generics.ListCreateAPIView):
-    # permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    authentication_classes = (TokenAuthentication,)
     queryset = Category.objects.all()
     serializer_class = ShortCategorySerializer
-    authentication_classes = (TokenAuthentication,)
 
     def perform_create(self, serializer):
-        # get token
-        user = self.request.user
-        if user.is_anonymous:
-            raise PermissionDenied({"token":"No permission to create category"})
-
-        parent = None
-        if 'parent' in self.request.POST:
-            try:
-                parent = Category.objects.get(pk=int(self.request.POST['parent']))
-            except Category.DoesNotExist:
-                # raise
-                raise ValidationError({'parent':'Parent category not found'})
-
-        serializer.save(owner=user,parent=parent)
-        return super().perform_create(serializer)
+        serializer.save(owner=self.request.user)
     
 # simple function view to get all categories and its num of product
 @api_view(['GET'])

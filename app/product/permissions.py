@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-class IsProductOwnerOrReadOnly(permissions.BasePermission):
+class IsPhotoOwnerOrReadOnly(permissions.BasePermission):
     """
     Special permission for photo api
     """

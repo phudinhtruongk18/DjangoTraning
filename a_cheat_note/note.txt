@@ -7,9 +7,8 @@ atomic query
 
 plan
 check and optimize query
-check middle ware to get user
-retry task
 too long (time_out)
-
-atomic quẻy
 chery task
+
+viewn to services
+view to serilizer

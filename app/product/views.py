@@ -69,7 +69,7 @@ def edit_product(request,product_id):
                 messages.success(request, 'Product updated successfully')
             except ValidationError as e:
                 messages.warning(request, e)
-    return render(request, 'product/add_edit_product.html', context)
+    return render(request,'product/add_edit_product.html', context)
 
 # delete product if product is created by user
 @login_required(login_url='login')

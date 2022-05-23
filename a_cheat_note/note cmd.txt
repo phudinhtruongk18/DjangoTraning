@@ -152,6 +152,15 @@ sudung trong bai:
     - edit (khi 2 nguoi dung cung sua 1 san pham)
     - quantiny (add)
 nhuoc diem transaction: 
-    - su dung bo nho dem
-    - co kha nang deadlock (1 need 2, 2 need 1)
+    - su dung bo nho dem (chua check)
+    - co kha nang deadlock (1 need 2, 2 need 1) (chua gap)
 
+
+hyperlink co the viet 1 model tach biet de co the de dang trong viet tach xuat thong tin
+
+    Because the behavior of nested creates and updates can be ambiguous, and may require complex dependencies 
+    between related models, REST framework 3 requires you to always write these methods explicitly. The default 
+    ModelSerializer .create() and .update() methods do not include support for writable nested representations.
+
+    There are however, third-party packages available such as DRF Writable Nested that support automatic writable 
+    nested representations.

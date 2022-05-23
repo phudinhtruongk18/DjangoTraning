@@ -3,25 +3,48 @@ from rest_framework import serializers
 from product.my_validators import validate_name, unique_validator
 from product.models import Product
 
-# temp serializer photo
-class TempPhotoSerializer(serializers.Serializer):
-    photo = serializers.ImageField()
+from category.models import Category
+
+class CategoryHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
+    url = serializers.HyperlinkedIdentityField(view_name='category:my_category', lookup_field='pk',
+                                                read_only=True, format='html')
 
     class Meta:
-        fields = ('photo')
+        model = Category
+        fields = ['url', 'name']
 
-class ShortProductSerializer(serializers.ModelSerializer):
+# temp serializer photo
+class TempPhotoSerializer(serializers.Serializer):
+    image = serializers.ImageField()
+
+    class Meta:
+        fields = ('image')
+
+class CreateProductSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField(read_only=True)
     url = serializers.HyperlinkedIdentityField(view_name='product_detail', lookup_field='pk')
     date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
     name = serializers.CharField(required=True, validators=[validate_name,unique_validator])
     views_count = serializers.SerializerMethodField(read_only=True)
-    categories = serializers.SerializerMethodField()
-    photos = TempPhotoSerializer(source='photo_set',many=True,write_only=True,required=False)
     
+    categories = serializers.PrimaryKeyRelatedField(
+        many=True,
+        read_only=False,
+        queryset=Category.objects.all()
+        )
+
+    # trong thuc te thi viec upload anh se duoc handle rieng
+    # photos = TempPhotoSerializer(source='photo_set',many=True,read_only=True)
+
     class Meta:
         model = Product
-        fields = ('owner','url','date_added', 'name', 'views_count', 'thumb','categories','photos')
+        fields = ('owner','url','date_added', 'name', 'views_count', 'thumb','categories')
+
+    # def validate(self, data):
+    # def create(self, validated_data):
+    #     categories = validated_data.pop('categories')
+    # def update(self, instance, validated_data):
+#         profile_data = validated_data.pop('profile')
 
     def get_owner(self, obj):
         if obj.owner:
@@ -31,6 +54,10 @@ class ShortProductSerializer(serializers.ModelSerializer):
     def get_views_count(self, obj):
         return obj.hit_count.hits
 
-    def get_categories(self, obj):
-        return obj.categories.values_list('name', flat=True)
-        
+class ListProductSerializer(CreateProductSerializer):
+    categories = CategoryHyperLinkSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = ('owner','url','date_added', 'name', 'views_count', 'thumb','categories')
+
