@@ -55,23 +55,20 @@ from app.settings import EMAIL_HOST_USER
 from django.template.loader import render_to_string 
 
 @shared_task(name="Mail new kid",autoretry_for=(Exception,), retry_backoff=2)
-def send_mai_to_kid(created,current_site,email,domain,uid,token):
+def send_mai_to_kid(current_site,email,domain,uid,token):
     # autoretry_for=(Exception,), retry_backoff=2
-    if created:
-        print("Send email to", email)
-        mail_subject = 'Activate your Aram Account'
-        text_message = render_to_string('user/active_email.html', {
-            'user': email,
-            'current_site' : current_site,
-            'domain': domain,
-            'uid': uid,
-            'token': token,
-        })
+    print("Send email to", email)
+    mail_subject = 'Activate your Aram Account'
+    text_message = render_to_string('user/active_email.html', {
+        'user': email,
+        'current_site' : current_site,
+        'domain': domain,
+        'uid': uid,
+        'token': token,
+    })
 
-        message = EmailMessage(mail_subject, text_message, EMAIL_HOST_USER, [email])
-        message.send()
-    else:
-        print(email, "was just saved")
+    message = EmailMessage(mail_subject, text_message, EMAIL_HOST_USER, [email])
+    message.send()
 
 if __name__ == '__main__':
     # print(app)

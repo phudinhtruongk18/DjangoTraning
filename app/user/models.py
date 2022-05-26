@@ -9,6 +9,9 @@ from django.contrib.sites.models import Site
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 from django.dispatch import receiver
+
+from .my_signal import user_signup
+
 from django.db.models.signals import (
         post_save,
         pre_save
@@ -17,13 +20,18 @@ from django.db.models.signals import (
 
 # Create your models here.
 class MyAccountManager(BaseUserManager):
-    def create_user(self, username, email, password=None, first_name="", last_name="",*something,**extra_fields):
-
+    def create_user(self, username, email, password=None, first_name="", last_name="",is_from_google=False,*something,**extra_fields):
+        
         if not email:
             raise ValueError('Email address is required')
 
         if not username:
             raise ValueError('User name is required')
+
+        is_active = False
+        
+        if is_from_google:
+            is_active = True
 
         # Tạo đối tượng user mới
         user = self.model(
@@ -32,11 +40,15 @@ class MyAccountManager(BaseUserManager):
             first_name=first_name,
             last_name=last_name,
             is_staff=True,
-            is_active=False,
+            is_active=is_active,
         )
         
         user.set_password(password)
         user.save(using=self._db)
+        # print("User created")
+        user_signup.send(sender=self.__class__, instance=user, email=email, first_name=first_name, last_name=last_name)
+        # print("Signal sent")
+
         return user
 
     def create_superuser(self, first_name, last_name, email, username, password):
@@ -92,21 +104,33 @@ class NomalUser(AbstractBaseUser):
     # def is_authenticated(self):
         # return True
 
-@receiver(pre_save, sender=NomalUser)
-def user_post_save_receiver(sender, instance, *args, **kwargs):
+@receiver(user_signup, sender=NomalUser)
+def user_signup_receiver(sender, instance, *args, **kwargs):
+    # DEBUG HERE
     if instance.social_auth.exists():
         instance.is_active = True
 
 
-# @receiver(post_save, sender=NomalUser)
-# def user_post_save_receiver(sender, instance, created, *args, **kwargs):
-#     """
-#     after saved in the database
-#     """
-#     print("user_post_save_receiver")
-        
-#     uid = urlsafe_base64_encode(force_bytes(instance.pk))
-#     current_site = Site.objects.get_current()
-#     token = default_token_generator.make_token(instance)
-#     email = instance.email
-#     send_mai_to_kid.delay(created,str(current_site), email,str(current_site.domain),uid,token)
+@receiver(user_signup, sender=MyAccountManager)
+def user_signup_receiver(sender, instance, *args, **kwargs):
+    """
+    after saved in the database
+    """
+
+    # print("user_post_save_receiver")
+    # print(sender)
+    # print(instance)
+    # print(args)
+    # print(kwargs)
+
+    uid = urlsafe_base64_encode(force_bytes(instance.pk))
+    current_site = Site.objects.get_current()
+    token = default_token_generator.make_token(instance)
+    email = instance.email
+    send_mai_to_kid.delay(
+                    current_site=str(current_site), 
+                    email=email,
+                    domain=str(current_site.domain),
+                    uid=uid,
+                    token=token
+                    )

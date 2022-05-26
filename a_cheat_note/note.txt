@@ -1,14 +1,10 @@
 
 done
-parent of category (api create) 
-categories of product (api create)
-photos  of product (api create)  (slow)
-atomic query
+view to serilizer
+user signup signal 
 
 plan
 check and optimize query
 too long (time_out)
 chery task
-
-viewn to services
-view to serilizer
+view to services

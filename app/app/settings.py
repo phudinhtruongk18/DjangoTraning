@@ -228,6 +228,8 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'dashboard'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
+NEW_USER_REDIRECT_URL = "schema-swagger-ui"
+
 # </========== CONGIFGURE AUTH ===========>
 
 # </========================================================================>
