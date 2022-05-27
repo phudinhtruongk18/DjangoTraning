@@ -19,6 +19,7 @@ from django.db.models.signals import (
 
 from django.db.models import Q 
 
+
 class CategoryQuerySet(models.QuerySet):
     def is_have_owner(self):
         return self.filter(owner__isnull=False)
@@ -31,6 +32,7 @@ class CategoryQuerySet(models.QuerySet):
             qs = (qs|qs2).distinct()
         return qs
 
+
 class CategoryManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
         return CategoryQuerySet(self.model, using=self._db)
@@ -39,12 +41,14 @@ class CategoryManager(models.Manager):
         lookup = (Q(name__icontains=query) | Q(date_added__icontains=query))
         qs = self.get_queryset().search(query,owner=owner)
 
+
 class MyNode(models.Model):
     """My own abstract node model to implement tree structure"""
     parent = models.ForeignKey('self', on_delete=models.SET_NULL, null=True, blank=True, related_name='children')
 
     class Meta:
         abstract = True
+
 
 class Category(MyNode, HitCountMixin):
     """A node Category"""
@@ -87,21 +91,3 @@ class Category(MyNode, HitCountMixin):
         if self.image:
             return get_thumbnail(self.image, '350x350', quality=90).url
         return None
-
-# viet 1 cai signal cho category
-# if create thi set user
-# if update thi check user is the right one
-
-# @receiver(pre_save, sender=Category)
-# def category_pre_save_receiver(sender, instance,raw,using,update_fields,*args, **kwargs):
-#     """
-#     before saved in the database
-#     """
-#     # print(instance.user)
-#     print(using)
-#     print(sender, instance,raw,using,update_fields, args, kwargs)
-#     print(kwargs['signal'])
-#     # if created:
-#     #     print("Created")
-#     # else:
-#     #     print("Updated")

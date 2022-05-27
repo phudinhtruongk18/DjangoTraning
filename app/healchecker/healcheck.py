@@ -16,6 +16,6 @@ def heal_check_pro() -> NoReturn:
         # send mail here
         mailing_healchecl(result.plugins)
     else:
-        print("working fine. Error:", result.errors)
+        print("working fine. Error Not found")
     # return here
     

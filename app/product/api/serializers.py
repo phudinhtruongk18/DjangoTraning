@@ -18,13 +18,13 @@ class PhotoListSerializer(serializers.ListSerializer):
 
 
 class PhotoSerializer(serializers.ModelSerializer):
-    url = serializers.HyperlinkedIdentityField(view_name='product_photo', lookup_field='pk',read_only=True)
-    product = CreateProductSerializer(write_only=True)
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(),)
+    image = serializers.ImageField(required=True)
     
     class Meta:
         model = Photo
-        fields = ('url','image', 'product')
-        list_serializer_class = PhotoListSerializer
+        fields = ('product','image')
+        # list_serializer_class = PhotoListSerializer
 
 
 class ProductSerializer(CreateProductSerializer):
@@ -41,21 +41,22 @@ class ProductSerializer(CreateProductSerializer):
         fields = ('owner', 'date_added', 'slug', 'name', 'views_count','thumb','categories','photos', 'comments')
         
     def get_thumb(self, obj):
-        request = self.context.get('request')
         thumb_url = obj.thumb
         return thumb_url
 
 
-class ReportProductSerializer(CreateProductSerializer):
+class ReportProductSerializer(serializers.Serializer):
+    name = serializers.CharField(read_only=True)
+    hit_count = serializers.IntegerField(source='hit_count_generic__hits',read_only=True)
 
     class Meta:
-        model = Product
-        fields = ('name', 'views_count')
-        
-        
-class CommentProductSerializer(CreateProductSerializer):
+        fields = ('name', 'hit_count')
+
+
+class CommentProductSerializer(serializers.Serializer):
+    name = serializers.CharField(read_only=True)
     comments = CommentSerializer(source="comment_set", read_only=True,many=True)
     
     class Meta:
-        model = Product
         fields = ('name', 'comments')
+

@@ -27,6 +27,8 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+import debug_toolbar
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Aram Catalog API",
@@ -63,8 +65,6 @@ urlpatterns = [
     path('', include('social_django.urls', namespace='social')),
     path('auth/', include('drf_social_oauth2.urls', namespace='drf')),
 ]
-
-import debug_toolbar
 
 if settings.DEBUG:
     urlpatterns += [

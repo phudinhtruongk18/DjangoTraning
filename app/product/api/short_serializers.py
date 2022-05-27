@@ -39,7 +39,7 @@ class CreateProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('owner','url','date_added', 'name', 'views_count', 'thumb','categories')
-        list_serializer_class = ProductListSerializer
+        # list_serializer_class = ProductListSerializer
         
     def get_owner(self, obj):
         if obj.owner:

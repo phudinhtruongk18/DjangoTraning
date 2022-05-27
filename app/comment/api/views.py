@@ -32,6 +32,5 @@ class CommentListCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         # get token
-        user = Token.objects.get(key=self.request.POST['token']).user
-        serializer.save(owner=user)
+        serializer.save(owner=self.request.user)
         return super().perform_create(serializer)

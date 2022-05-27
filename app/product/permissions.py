@@ -1,6 +1,6 @@
 from rest_framework import permissions
 
-class IsPhotoOwnerOrReadOnly(permissions.BasePermission):
+class IsProcductOwnerOrReadOnly(permissions.BasePermission):
     """
     Special permission for photo api
     """
@@ -8,6 +8,8 @@ class IsPhotoOwnerOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         # Read permissions are allowed to any request,
         # so we'll always allow GET, HEAD or OPTIONS requests.
+        print(request.user)
+        print(obj.product.owner)
         if request.method in permissions.SAFE_METHODS:
             return True
 

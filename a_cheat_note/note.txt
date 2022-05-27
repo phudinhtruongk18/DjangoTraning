@@ -8,3 +8,8 @@ check and optimize query
 too long (time_out)
 chery task
 view to services
+
+anote photo
+
+note lai post man url cua photo va comment
+note lai post man url upload multible obj category va product, photo

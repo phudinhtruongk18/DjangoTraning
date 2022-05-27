@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # -----------Celery-------------------
     'django_celery_results',
     # -----------Cross-origin resource sharing-------------------
     'corsheaders',
@@ -97,8 +98,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'social_django.middleware.SocialAuthExceptionMiddleware',  # <--
-    # need middleware
+    'social_django.middleware.SocialAuthExceptionMiddleware', 
 ]
 
 
@@ -228,7 +228,7 @@ SOCIAL_AUTH_LOGIN_ERROR_URL = 'login'
 SOCIAL_AUTH_LOGIN_REDIRECT_URL = 'dashboard'
 SOCIAL_AUTH_RAISE_EXCEPTIONS = True
 
-NEW_USER_REDIRECT_URL = "schema-swagger-ui"
+# NEW_USER_REDIRECT_URL = "schema-swagger-ui"
 
 # </========== CONGIFGURE AUTH ===========>
 
@@ -279,6 +279,7 @@ USE_TZ = True
 ATOMIC_REQUESTS = True
 
 if DEBUG:
+
     INSTALLED_APPS += [
         'debug_toolbar',
     ]
@@ -295,6 +296,7 @@ if DEBUG:
     #     '0.0.0.0',
     # ]
     
+    # DOCKER IP for debug_toolbar
     import socket  # only if you haven't already imported this
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]

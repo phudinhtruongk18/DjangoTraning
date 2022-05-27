@@ -1,1 +1,0 @@
-"""This use for heal check and do task with celery"""

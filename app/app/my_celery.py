@@ -2,6 +2,10 @@ import os
 from celery import Celery
 from celery.schedules import crontab
 # from celery.tasks import periodic_task
+from celery import shared_task
+from django.core.mail import EmailMessage
+from app.settings import EMAIL_HOST_USER
+from django.template.loader import render_to_string 
 
 
 # set the default Django settings module for the 'celery' program.
@@ -48,11 +52,6 @@ app.autodiscover_tasks()
 # def add(x, y):
 #     z = x + y
 #     print(z)
-
-from celery import shared_task
-from django.core.mail import EmailMessage
-from app.settings import EMAIL_HOST_USER
-from django.template.loader import render_to_string 
 
 @shared_task(name="Mail new kid",autoretry_for=(Exception,), retry_backoff=2)
 def send_mai_to_kid(current_site,email,domain,uid,token):

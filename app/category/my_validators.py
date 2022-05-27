@@ -18,3 +18,4 @@ unique_validator = UniqueValidator(
     message="Category already exists 2",
     lookup='iexact'
     )
+    

@@ -13,7 +13,7 @@ from category.models import Category
 from sorl.thumbnail import get_thumbnail
 
 
-class Product(models.Model,HitCountMixin):
+class Product(HitCountMixin,models.Model):
     """A product can have many categories"""
     owner = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,blank=False,null=True)
     name = models.CharField(max_length=200,unique = True)
