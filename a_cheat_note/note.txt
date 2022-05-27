@@ -1,15 +1,11 @@
 
 done
-view to serilizer
-user signup signal 
 
 plan
-check and optimize query
-too long (time_out)
-chery task
-view to services
 
-anote photo
+naming api resrc
 
-note lai post man url cua photo va comment
-note lai post man url upload multible obj category va product, photo
+chuyen qua services
+
+viet lai cai signal va xu ly bat dong bo trong celery
+

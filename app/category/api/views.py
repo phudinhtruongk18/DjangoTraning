@@ -17,7 +17,8 @@ from rest_framework.authentication import TokenAuthentication
 from category.models import Category
 from .serializers import DetailCategorySerializer,CategorySerializer
 from .serializers import ReportCategorySerializer
-
+# import permision IsAuthenticatedOrReadOnly
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 # -------------------- SINGLE --------------------
 
 class CategoryDetail(generics.RetrieveUpdateDestroyAPIView):
@@ -33,6 +34,7 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
     authentication_classes = (TokenAuthentication,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

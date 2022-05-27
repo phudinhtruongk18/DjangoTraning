@@ -46,7 +46,7 @@ class MyAccountManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         # print("User created")
-        user_signup.send(sender=self.__class__, instance=user, email=email, first_name=first_name, last_name=last_name)
+        user_signup.send(sender=self.__class__, instance=user)
         # print("Signal sent")
 
         return user
@@ -104,11 +104,11 @@ class NomalUser(AbstractBaseUser):
     # def is_authenticated(self):
         # return True
 
-@receiver(user_signup, sender=NomalUser)
-def user_signup_receiver(sender, instance, *args, **kwargs):
-    # DEBUG HERE
-    if instance.social_auth.exists():
-        instance.is_active = True
+# @receiver(user_signup, sender=NomalUser)
+# def user_signup_receiver(sender, instance, *args, **kwargs):
+#     # DEBUG HERE
+#     if instance.social_auth.exists():
+#         instance.is_active = True
 
 
 @receiver(user_signup, sender=MyAccountManager)
@@ -123,14 +123,16 @@ def user_signup_receiver(sender, instance, *args, **kwargs):
     # print(args)
     # print(kwargs)
 
-    uid = urlsafe_base64_encode(force_bytes(instance.pk))
-    current_site = Site.objects.get_current()
-    token = default_token_generator.make_token(instance)
-    email = instance.email
+    # uid = urlsafe_base64_encode(force_bytes(instance.pk))
+    # current_site = Site.objects.get_current()
+    # token = default_token_generator.make_token(instance)
+    # email = instance.email
     send_mai_to_kid.delay(
-                    current_site=str(current_site), 
-                    email=email,
-                    domain=str(current_site.domain),
-                    uid=uid,
-                    token=token
+        # send pk to fix bug
+
+                    # current_site=str(current_site), 
+                    # email=email,
+                    # domain=str(current_site.domain),
+                    # uid=uid,
+                    # token=token
                     )

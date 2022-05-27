@@ -20,12 +20,21 @@ class PhotoListSerializer(serializers.ListSerializer):
 class PhotoSerializer(serializers.ModelSerializer):
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(),)
     image = serializers.ImageField(required=True)
-    
+
     class Meta:
         model = Photo
         fields = ('product','image')
-        # list_serializer_class = PhotoListSerializer
+        list_serializer_class = PhotoListSerializer
 
+    # check product owner 
+    # def create(self, attrs):
+    #     user =  self.context['request'].user
+    #     product_owner = attrs['product'].owner
+
+    #     if product_owner != user:
+    #         raise serializers.ValidationError('You are not the owner of this product')
+    #     # return attrs
+    #     return super().create(attrs)
 
 class ProductSerializer(CreateProductSerializer):
     "Same to CreateProductSerializer"

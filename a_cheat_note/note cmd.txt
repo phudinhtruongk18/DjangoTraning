@@ -152,7 +152,6 @@ sudung trong bai:
     - edit (khi 2 nguoi dung cung sua 1 san pham)
     - quantiny (add)
 nhuoc diem transaction: 
-    - su dung bo nho dem (chua check)
     - co kha nang deadlock (1 need 2, 2 need 1) (chua gap)
 
 

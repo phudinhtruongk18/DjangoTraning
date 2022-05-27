@@ -14,11 +14,32 @@ class CategoryHyperLinkSerializer(serializers.HyperlinkedModelSerializer):
         model = Category
         fields = ['url', 'name']
 
+from django.db import IntegrityError, transaction
 
 class ProductListSerializer(serializers.ListSerializer):
     def create(self, validated_data):
-        categories = [Product(**item) for item in validated_data]
-        return Product.objects.bulk_create(categories)
+        products = []
+        print(validated_data)
+
+        # with transaction.atomic():
+
+        for item in validated_data:
+            print(item)
+            print(item['name'])
+            print(item['categories'])
+            print(item['owner'])
+
+            sing_product = Product(name=item['name'],owner=item['owner'])
+            # sing_product.save()
+            products.append(sing_product)
+        
+        return Product.objects.bulk_create(products)
+            # sing_product.categories.set(item['categories'])
+
+            # products.append(sing_product)
+
+        # return Product.objects.bulk_create(products)
+        # return Product.objects.bulk_update(products,['categories'])
 
 class CreateProductSerializer(serializers.ModelSerializer):
     owner = serializers.SerializerMethodField(read_only=True)
@@ -39,8 +60,8 @@ class CreateProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ('owner','url','date_added', 'name', 'views_count', 'thumb','categories')
-        # list_serializer_class = ProductListSerializer
-        
+        list_serializer_class = ProductListSerializer
+    
     def get_owner(self, obj):
         if obj.owner:
             return obj.owner.username
