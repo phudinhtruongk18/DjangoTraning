@@ -3,9 +3,26 @@ done
 
 plan
 
-naming api resrc
 
-chuyen qua services
+
+- chuyen qua services
+
+    services.py
+    ...
+    def created_product(input: dict) -> Product:
+    ...
+
+    views.py
+    ...
+    validated_data = serializer.validated_data
+    product = service.create_product(validated_data)
+    return product
+    ...
 
 viet lai cai signal va xu ly bat dong bo trong celery
+naming api resrc
+viet lai get report product list thanh class?
 
+
+        # researach ore
+        # headers = self.get_success_headers(category.data)

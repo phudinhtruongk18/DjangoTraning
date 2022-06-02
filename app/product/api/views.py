@@ -73,17 +73,17 @@ class ProductCreateAPIView(generics.CreateAPIView):
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
     
-    def get_serializer(self, *args, **kwargs):
-        # print("if 0")
-        if "data" in kwargs:
-            # print("if 1")
-            data = kwargs["data"]
+    # def get_serializer(self, *args, **kwargs):
+    #     # print("if 0")
+    #     if "data" in kwargs:
+    #         # print("if 1")
+    #         data = kwargs["data"]
 
-            if isinstance(data, list):
-                kwargs["many"] = True
-                # print("if 2")
+    #         if isinstance(data, list):
+    #             kwargs["many"] = True
+    #             # print("if 2")
 
-        return super(ProductCreateAPIView, self).get_serializer(*args, **kwargs)
+    #     return super(ProductCreateAPIView, self).get_serializer(*args, **kwargs)
 
 
 class ProductListAPIView(generics.ListAPIView):

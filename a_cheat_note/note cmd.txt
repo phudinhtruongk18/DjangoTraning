@@ -163,3 +163,74 @@ hyperlink co the viet 1 model tach biet de co the de dang trong viet tach xuat t
 
     There are however, third-party packages available such as DRF Writable Nested that support automatic writable 
     nested representations.
+
+why do we need to use the serializer?
+    - serializer is used to validate the data
+    - serializer is used to convert the data to the model
+    - serializer is used to convert the model to the data
+
+SERVICE (for scale and longevity) (update/create)
+    """ https://github.com/HackSoftware/Django-Styleguide """
+    + when using this structure serializer is gonna nested in the API
+        - list/detail can use ModelSerializer
+        - create/update can use nomal serializer
+        - reusing serializer should be done with great care and attention
+        - to avoid reusing serializer, you can use "inline serializer"
+            """
+            weeks = inline_serializer(many=True, fields = {
+                                        'id': serializer,IntegerField,
+                                        'number': serializer,IntegerField,
+                                        }
+                )
+            """
+
+    + service.py
+        - can handle permission
+        - handle the business logic
+        - multiple cross-cutting concerns (orther services or tasks)
+
+    + selector.py
+        - not always nessesary
+        - for fetching data
+        - handle permission, filtering
+
+        - if model property start doing query on the model's relation or outside of them
+
+    + testing models 
+        - tesing custom property or validation
+        - can testing without database (fast)
+
+    + testing service
+        - heavy lifting is done here
+        - mocks are used to test the service (to isolate the specific path, such as the orther services and tasks)
+
+        Marting angelov's lecture "proper django testing" 16:05 lammermuir
+
+    + avoid business login in:
+        - model save method
+        - form and serilizer
+        - templates, tags and utility method
+        - task and utility method
+    
+    Validation should be moved to the service layer if:
+        The validation logic is more complex.
+        Spanning relations & fetching additional data is required.
+
+    Validation - constraints:
+        you can do validation using Django's constraints, then you should aim for that.
+
+        """
+        class Course(BaseModel):
+        class Meta:
+            constraints = [
+                models.CheckConstraint(
+                    name="start_date_before_end_date",
+                    check=Q(start_date__lt=F("end_date"))
+                )
+            ]
+        """
+    Properties should be something else (service, selector, utility) in the following cases:
+        If we need to span multiple relations or fetch additional data.
+        If the calculation is more complex.
+
+

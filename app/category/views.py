@@ -165,3 +165,4 @@ class CategoryDeleteView(CategoryBaseView, DeleteView):
         self.object.delete()
         messages.success(self.request, "Your category has been deleted!")
         return redirect(self.manage_url)
+

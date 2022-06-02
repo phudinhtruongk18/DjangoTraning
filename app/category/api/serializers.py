@@ -77,3 +77,25 @@ class DetailCategorySerializer(CategorySerializer):
         if obj.parent:
             return obj.parent.name
         return None
+
+from user.api.serializers import MyUserSerializer
+
+class CustomCategorySerializer(serializers.Serializer):
+    # owner = MyUserSerializer(read_only = True)
+    owner = serializers.SerializerMethodField('_owner',validators=[validate_owner])
+
+    # url = serializers.CharField(view_name='category:my_category', lookup_field='pk',read_only=True)
+    name = serializers.CharField(required=True, validators=[unique_validator])
+    date_added = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S", read_only=True)
+
+    image = serializers.ImageField(required=False)
+    parent = serializers.PrimaryKeyRelatedField(
+        read_only=False,
+        queryset=Category.objects.all()
+        )
+
+    class Meta:
+        model = Category
+        fields = ('owner','url', 'name','date_added','image','views_count','parent')
+        list_serializer_class = CategoryListSerializer
+        

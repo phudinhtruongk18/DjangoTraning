@@ -1,0 +1,11 @@
+
+done
+
+plan
+
+naming api resrc
+
+chuyen qua services
+
+viet lai cai signal va xu ly bat dong bo trong celery
+
