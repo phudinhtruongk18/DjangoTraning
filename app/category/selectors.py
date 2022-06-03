@@ -1,7 +1,8 @@
-from typing import Iterable
+from django.db.models.query import QuerySet
+from django.db.models import Count
+
 from .models import Category
 from user.models import NomalUser
 
-def get_categories_by_owner(owner: NomalUser) -> Iterable[Category]:
-    return Category.objects.filter(owner=owner)
-
+def get_rp_categories() -> QuerySet[Category]:
+    return Category.objects.annotate(num_products=Count('product')).order_by('-num_products')

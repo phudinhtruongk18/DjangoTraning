@@ -28,3 +28,5 @@ class Email(BaseModel):
     plain_text = models.TextField()
 
     sent_at = models.DateTimeField(blank=True, null=True)
+
+    # hai lan

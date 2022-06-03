@@ -6,7 +6,8 @@ from styleguide_example.common.services import model_update
 from styleguide_example.emails.models import Email
 
 
-@transaction.atomic
+
+# @transaction.atomic
 def email_send(email: Email) -> Email:
     if email.status != Email.Status.SENDING:
         raise ApplicationError(f"Cannot send non-ready emails. Current status is {email.status}")
@@ -21,7 +22,8 @@ def email_send(email: Email) -> Email:
     msg = EmailMultiAlternatives(subject, plain_text, from_email, [to])
     msg.attach_alternative(html, "text/html")
 
-    msg.send()
+    # msg.send()
+    # select for update
 
     email, _ = model_update(
         instance=email,

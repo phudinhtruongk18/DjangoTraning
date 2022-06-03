@@ -22,11 +22,4 @@ plan
 viet lai cai signal va xu ly bat dong bo trong celery
 naming api resrc
 viet lai get report product list thanh class
-
-- minh co di dung huong chua?
-    if true:
-        - theo trong cai bai library thi se chuyen tu Generic qua ApiView (se custom lai cai thang auth-permission)?
-            + thi co nen follow cach do khong?
-    else:
-        - thi can lam theo cai nao
         

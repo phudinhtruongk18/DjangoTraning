@@ -57,3 +57,4 @@ def assert_settings(required_settings, error_message_prefix=""):
         raise ImproperlyConfigured(f"{error_message_prefix} Could not find: {stringified_not_present}")
 
     return values
+    

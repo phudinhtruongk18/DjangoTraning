@@ -50,7 +50,7 @@ class MyNode(models.Model):
         abstract = True
 
 
-class Category(MyNode, HitCountMixin):
+class Category(HitCountMixin, MyNode):
     """A node Category"""
     owner = models.ForeignKey(NomalUser, on_delete=models.SET_NULL,blank=False,null=True)
     name = models.CharField(max_length=200,unique=True)
