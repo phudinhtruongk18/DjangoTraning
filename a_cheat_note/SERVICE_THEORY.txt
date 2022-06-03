@@ -1,0 +1,127 @@
+
+SERVICE (for scale and longevity) (update/create)
+    """ https://github.com/HackSoftware/Django-Styleguide """
+    + when using this structure serializer is gonna nested in the API
+        - list/detail can use ModelSerializer
+        - create/update can use nomal serializer
+        - reusing serializer should be done with great care and attention
+        - to avoid reusing serializer, you can use "inline serializer"
+            """
+            weeks = inline_serializer(many=True, fields = {
+                                        'id': serializer,IntegerField,
+                                        'number': serializer,IntegerField,
+                                        }
+                )
+            """
+
+    + service.py
+        - can handle permission
+        - handle the business logic
+        - multiple cross-cutting concerns (orther services or tasks)
+
+    + selector.py
+        - not always nessesary
+        - for fetching data
+        - handle permission, filtering
+
+        - if model property start doing query on the model's relation or outside of them
+
+    + testing models 
+        - tesing custom property or validation
+        - can testing without database (fast)
+
+    + testing service
+        - heavy lifting is done here
+        - mocks are used to test the service (to isolate the specific path, such as the orther services and tasks)
+
+        Marting angelov's lecture "proper django testing" 16:05 lammermuir
+
+    + avoid business login in:
+        - model save method
+        - form and serilizer
+        - templates, tags and utility method
+        - task and utility method
+    
+    Validation should be moved to the service layer if:
+        The validation logic is more complex.
+        Spanning relations & fetching additional data is required.
+
+
+    Validation - clean:
+    """
+    def clean(self):
+        if self.start_date >= self.end_date:
+            raise ValidationError("End date cannot be before start date")
+    """
+
+    Validation - constraints:
+        you can do validation using Django's constraints, then you should aim for that.
+
+        """
+        class Course(BaseModel):
+        class Meta:
+            constraints = [
+                models.CheckConstraint(
+                    name="start_date_before_end_date",
+                    check=Q(start_date__lt=F("end_date"))
+                )
+            ]
+        """
+    Properties should be something else (service, selector, utility) in the following cases:
+        If we need to span multiple relations or fetch additional data.
+        If the calculation is more complex.
+
+
+    - in case you are using DRF's serializers, here are our rules:
+        Serializer should be nested in the API and be named either InputSerializer or OutputSerializer.
+        Our preference is for both serializers to inherit from the simpler Serializer and avoid using ModelSerializer
+        This is a matter of preference and choice. If ModelSerializer is working fine for you, use it.
+        If you need a nested serializer, use the inline_serializer util.
+        Reuse serializers as little as possible.
+        Reusing serializers may expose you to unexpected behavior, when something changes in the base serializers.
+    
+    - naming 
+        + <Entity><Action>Api (ex:UserSendResetPasswordApi)
+
+    - We have the following preferences:
+        -Pick class-based APIS / views by default.
+        -If everyone else preferes & are comfortable with functions, use function-based APIs / views.
+
+
+    The generic model_update implementation looks like this:
+        def user_update(*, user: User, data) -> User:
+            non_side_effect_fields = ['first_name', 'last_name']
+
+            user, has_updated = model_update(
+                instance=user,
+                fields=non_side_effect_fields,
+                data=data
+            )
+
+            # Side-effect fields update here (e.g. username is generated based on first & last name)
+
+            # ... some additional tasks with the user ...
+
+            return user
+        
+        def model_update(
+                *,
+                instance: DjangoModelType,
+                fields: List[str],
+                data: Dict[str, Any]
+            ) -> Tuple[DjangoModelType, bool]:
+                has_updated = False
+
+                for field in fields:
+                    if field not in data:
+                        continue
+
+                    if getattr(instance, field) != data[field]:
+                        has_updated = True
+                        setattr(instance, field, data[field])
+
+                if has_updated:
+                    instance.full_clean()
+                    instance.save(update_fields=fields)
+
+                return instance, has_updated

@@ -5,7 +5,8 @@ from celery.schedules import crontab
 from celery import shared_task
 from django.core.mail import EmailMessage
 from app.settings import EMAIL_HOST_USER
-from django.template.loader import render_to_string 
+from django.template.loader import render_to_string
+
 
 
 # set the default Django settings module for the 'celery' program.
@@ -23,6 +24,7 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 def setup_periodic_tasks(sender, **kwargs):
     from healchecker.healcheck import heal_check_pro
     from mail.worker import report_user_daily
+    from mail.models import Email
 
     @app.task
     def daily_task():
@@ -53,21 +55,48 @@ app.autodiscover_tasks()
 #     z = x + y
 #     print(z)
 
-@shared_task(name="Mail new kid",autoretry_for=(Exception,), retry_backoff=2)
-def send_mai_to_kid(current_site,email,domain,uid,token):
-    # autoretry_for=(Exception,), retry_backoff=2
-    print("Send email to", email)
-    mail_subject = 'Activate your Aram Account'
-    text_message = render_to_string('user/active_email.html', {
-        'user': email,
-        'current_site' : current_site,
-        'domain': domain,
-        'uid': uid,
-        'token': token,
-    })
+# @shared_task(name="Mail new kid",autoretry_for=(Exception,), retry_backoff=2)
+# def send_mai_to_kid(current_site,email,domain,uid,token):
+#     # autoretry_for=(Exception,), retry_backoff=2
+#     print("Send email to", email)
+#     mail_subject = 'Activate your Aram Account'
+#     text_message = render_to_string('user/active_email.html', {
+#         'user': email,
+#         'current_site' : current_site,
+#         'domain': domain,
+#         'uid': uid,
+#         'token': token,
+#      })
+#     message = EmailMessage(mail_subject, text_message, EMAIL_HOST_USER, [email])
+#     message.send()
 
-    message = EmailMessage(mail_subject, text_message, EMAIL_HOST_USER, [email])
-    message.send()
+# Lets expand the email_send task example from above, by adding error handling:
+from celery.utils.log import get_task_logger
+
+logger = get_task_logger(__name__)
+
+def _email_send_failure(self, exc, task_id, args, kwargs, einfo):
+    email_id = args[0]
+    email = Email.objects.get(id=email_id)
+
+    from mail.services import email_failed
+
+    email_failed(email)
+
+
+@shared_task(name="Mail new kid",autoretry_for=(Exception,), retry_backoff=2)
+def email_send(self,email_id):
+    email = Email.objects.get(id=email_id)
+
+    from mail.services import email_send
+
+    try:
+        email_send(email)
+    except Exception as exc:
+        # https://docs.celeryq.dev/en/stable/userguide/tasks.html#retrying
+        logger.warning(f"Exception occurred while sending email: {exc}")
+        self.retry(exc=exc, countdown=5)
+
 
 if __name__ == '__main__':
     # print(app)

@@ -169,68 +169,24 @@ why do we need to use the serializer?
     - serializer is used to convert the data to the model
     - serializer is used to convert the model to the data
 
-SERVICE (for scale and longevity) (update/create)
-    """ https://github.com/HackSoftware/Django-Styleguide """
-    + when using this structure serializer is gonna nested in the API
-        - list/detail can use ModelSerializer
-        - create/update can use nomal serializer
-        - reusing serializer should be done with great care and attention
-        - to avoid reusing serializer, you can use "inline serializer"
-            """
-            weeks = inline_serializer(many=True, fields = {
-                                        'id': serializer,IntegerField,
-                                        'number': serializer,IntegerField,
-                                        }
-                )
-            """
+status That's simple enough:
+    400 will be used for validation errors.
+    401 for auth errors.
+    403 for permission errors.
+    404 for not found errors.
+    429 for throttling errors.
+    500 for server errors (we need to be careful not to silence an exception causing 500 and always report that in services like Sentry)
 
-    + service.py
-        - can handle permission
-        - handle the business logic
-        - multiple cross-cutting concerns (orther services or tasks)
+We use Celery for the following general cases:
+    # ve nguyen tac thi celery khong nen xu ly logic
+    Communicating with 3rd party services (sending emails, notifications, etc.)
+    Offloading heavier computational tasks outside the HTTP cycle.
+    Periodic tasks (using Celery beat)
 
-    + selector.py
-        - not always nessesary
-        - for fetching data
-        - handle permission, filtering
+Periodic Tasks
+    Managing periodic tasks is quite important, especially when you have tens or hundreds of them.
+    We use Celery Beat + django_celery_beat.schedulers:DatabaseScheduler + django-celery-beat for our periodic tasks.
+    The extra thing that we do is to have a management command, called setup_periodic_tasks, which holds the definition of all periodic tasks within the system. This command is located in the tasks app, discussed above.
 
-        - if model property start doing query on the model's relation or outside of them
-
-    + testing models 
-        - tesing custom property or validation
-        - can testing without database (fast)
-
-    + testing service
-        - heavy lifting is done here
-        - mocks are used to test the service (to isolate the specific path, such as the orther services and tasks)
-
-        Marting angelov's lecture "proper django testing" 16:05 lammermuir
-
-    + avoid business login in:
-        - model save method
-        - form and serilizer
-        - templates, tags and utility method
-        - task and utility method
-    
-    Validation should be moved to the service layer if:
-        The validation logic is more complex.
-        Spanning relations & fetching additional data is required.
-
-    Validation - constraints:
-        you can do validation using Django's constraints, then you should aim for that.
-
-        """
-        class Course(BaseModel):
-        class Meta:
-            constraints = [
-                models.CheckConstraint(
-                    name="start_date_before_end_date",
-                    check=Q(start_date__lt=F("end_date"))
-                )
-            ]
-        """
-    Properties should be something else (service, selector, utility) in the following cases:
-        If we need to span multiple relations or fetch additional data.
-        If the calculation is more complex.
-
-
+Python Utils is a collection of small Python functions and classes which make common patterns shorter and easier. 
+It is by no means a complete collection but it has served me quite a bit in the past and I will keep extending it. 

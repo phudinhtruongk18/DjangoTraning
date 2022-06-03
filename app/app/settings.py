@@ -72,6 +72,8 @@ INSTALLED_APPS = [
     # -----------COUNT-LIBRARY-------------------
     'hitcount',
     # -----------CORE-------------------
+    'core',
+    'common',
     'user',
 
     'category', 
@@ -252,9 +254,9 @@ REST_FRAMEWORK = {
         # 'drf_social_oauth2.authentication.SocialAuthentication',
     ),
     # my custom default settings
-    'DEFAULT_PAGINATION_CLASS': 'app.my_pagination.SmallResultsSetPagination',
+    'DEFAULT_PAGINATION_CLASS': 'common.my_pagination.SmallResultsSetPagination',
     'DEFAULT_PERMISSION_CLASSES': (
-        'app.my_permissions.IsOwnerOrReadOnly',
+        'common.my_permissions.IsOwnerOrReadOnly',
     ),
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework.permissions.IsAuthenticated',

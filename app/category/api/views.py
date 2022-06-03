@@ -44,10 +44,9 @@ class CategoryListCreateAPIView(generics.ListCreateAPIView):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # custom 1
+
         owner = request.user
 
-        # serializer = serializer(owner=self.request.user)
         validated_data = serializer.validated_data
         category = services.create_category(owner=owner,**validated_data)
 

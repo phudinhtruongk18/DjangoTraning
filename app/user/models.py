@@ -3,7 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.db import models
 
-from app.my_celery import send_mai_to_kid
+# from app.my_celery import send_mai_to_kid
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.sites.models import Site
 from django.utils.http import urlsafe_base64_encode
@@ -111,6 +111,23 @@ class NomalUser(AbstractBaseUser):
 #         instance.is_active = True
 
 
+# note to send mail with signal
+
+# from django.db import transaction
+
+# # ... more imports here ...
+
+# from styleguide_example.emails.tasks import email_send as email_send_task
+# @transaction.atomic
+# def user_complete_onboarding(user: User) -> User:
+#     # ... some code here
+
+#     email = email_get_onboarding_template(user=user)
+
+#     transaction.on_commit(lambda: email_send_task.delay(email.id))
+
+#     return user
+
 @receiver(user_signup, sender=MyAccountManager)
 def user_signup_receiver(sender, instance, *args, **kwargs):
     """
@@ -127,7 +144,7 @@ def user_signup_receiver(sender, instance, *args, **kwargs):
     # current_site = Site.objects.get_current()
     # token = default_token_generator.make_token(instance)
     # email = instance.email
-    send_mai_to_kid.delay(
+    send_mai_to_kid.delay(        
         # send pk to fix bug
 
                     # current_site=str(current_site), 
